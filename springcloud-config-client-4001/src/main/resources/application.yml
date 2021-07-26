@@ -1,0 +1,12 @@
+# application.yml 优先级低，用于指定项目的信息
+# bootstrap.yml 优先级高，可以用于远程获取配置
+spring:
+  application:
+    name: config-client
+server:
+  # 因为 bootstrap 配置的权限高
+  # ，所以即便这里配置端口号为 4001
+  # ，但是启动之后，它会自动读取配置里面的端口号
+  # 假设远程配置文件的端口为 8200
+  # ，那这个微服务的端口也就变为了 8200
+  port: 4001

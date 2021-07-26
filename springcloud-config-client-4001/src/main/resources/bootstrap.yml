@@ -1,0 +1,16 @@
+# bootstrap.yml 优先级比 application.yml 高
+# 步骤：
+# 1. 另外一个 Config Server 服务先从 GitHub 上读取配置
+# 2. 当前的 Config Client 服务绑定 Config Server 服务的地址和端口
+# 3. 读取 master 分支上，后缀为 .yml 的某个配置文件（可以指定 profile）
+spring:
+  cloud:
+    config:
+      # 在 Config Client 端 绑定 Config Server 端的地址
+      uri: http://localhost:3001
+      # GitHub 上的哪条分支
+      label: master
+      # 需要读取的配置的名称，这里不需要填写后缀（.yml）
+      name: config-provider-dept
+      # 指定哪个 profile
+      profile: test

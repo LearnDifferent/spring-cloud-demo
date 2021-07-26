@@ -1,0 +1,15 @@
+server:
+  port: 3001
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          # GitHub 已经将 master branch 改为了 main branch，所以这里要设置
+          default-label: master
+          # Server 绑定 Git 远程仓库
+          uri: https://github.com/LearnDifferent/springcloud-config-demo.git
+
+
