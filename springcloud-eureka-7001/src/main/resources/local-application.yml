@@ -1,0 +1,32 @@
+# 这是一开始写的配置文件，后来使用了远程配置文件
+server:
+  port: 7001
+spring:
+  application:
+    name: eureka-server # Server 的名称（集群中的 Server 使用相同名称）
+eureka:
+  instance:
+    # 当前 Eureka Server 的域名
+    # 单机的时候可以填写 localhost
+    # 如果是 Server 的集群，就这台 Server 所在的 IP
+    # 这里把 127.0.0.1 映射到了 eureka7001.com
+    hostname: eureka7001.com
+  client:
+    # 是否向注册中心 注册？如果是单独的 Server（standalone mode），就设置为 false
+    # must be true to have each server in the cluster replicate information with each other:
+    # 1. Eureka server has a built-in Eureka client also
+    # 2. cluster of Eureka servers register among themselves as client
+    register-with-eureka: true
+    # Only clients need to fetch registry to get the registered microservices for communication
+    # EurekaServer need not register itself and also need not fetch other registered Microservices
+    # 理论上 Client 向 Server 注册了，所以 Server 就不需要 fetch registry 了
+    # ，但是如果想让 Server 在集群中保持高可用，也就是让注册中心中的 Server 互相复制注册表，其实也是可以的
+    fetch-registry: false # 集群中既可以设置为 true 也可以设置为 false
+    # 提供服务的地址
+    service-url:
+      # 源码：this.serviceUrl.put("defaultZone", "http://localhost:8761/eureka/");
+      # 这里修改 defaultZone 为自己需要的地址
+      # 单个 Eureka Server 的情况下，绑定本台机器：
+      # defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      # 集群的情况下，绑定除了本台机器以外的其他 Eureka Server：
+      defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
