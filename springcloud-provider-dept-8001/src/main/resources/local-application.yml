@@ -1,0 +1,37 @@
+# 这是原来在本地的配置
+server:
+  port: 8001
+mybatis:
+  # mybatis 的 alias 包，这里需要导入另一个专门存放实体类的微服务所在位置的包
+  type-aliases-package: com.example.springcloud.api.pojo
+  # 记得在 resources 下面创建 mapper 路径
+  mapper-locations: classpath:mapper/*.xml
+spring:
+  application:
+    # 项目名称
+    name: springcloud-provider-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/DB01?characterEncoding=UTF-8
+    username: root
+    password: rootroot
+# Eureka 的配置
+eureka:
+  client:
+    service-url:
+      # 服务注册到 Eureka Server（集群）中
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    # 可以设置在 Eureka 里面，这个实例的 Status 显示的内容
+    instance-id: provider-dept8001
+# A Eureka instance is also a Eureka client as it fetches the registry
+# from Eureka server containing the details of other instances.
+# In order to enable it, eureka.client.fetch-registry is set to true (by default, true).
+# 也就是说，在 Client 端口，fetch registry 默认就被设置为 true 了；register-with-eureka 同理
+
+# Eureka 实例的 Status 会超链接到该实例端口的 actuator/info 网址
+# 可以在配置中自定义 actuator/info 显示的 json 内容
+info:
+  appname: 自定义app名称
+  company: 自定义公司名称

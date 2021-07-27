@@ -1,0 +1,26 @@
+server:
+  port: 8002
+mybatis:
+  type-aliases-package: com.example.springcloud.api.pojo
+  mapper-locations: classpath:mapper/*.xml
+spring:
+  application:
+    # 如果有多个提供相似功能的 Provider，这里的 name 也要相同
+    name: springcloud-provider-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 如果有多个 Provider，他们各自的数据库可以是不同的
+    url: jdbc:mysql://127.0.0.1:3306/DB02?characterEncoding=UTF-8
+    username: root
+    password: rootroot
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    instance-id: provider-dept8002
+
+info:
+  appname: 自定义app名称
+  company: 自定义公司名称

@@ -1,0 +1,5 @@
+# 远程配置里面没有 MySQL 的用户和密码，所以在这里加上
+spring:
+  datasource:
+    username: root
+    password: rootroot

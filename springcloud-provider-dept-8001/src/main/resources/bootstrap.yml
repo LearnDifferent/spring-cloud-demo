@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      name: config-provider-dept
+      label: master
+      uri: http://localhost:3001
+      profile: test
