@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>MySpringCloudDemo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>springcloud-api</module>
+        <module>springcloud-provider-dept-8001</module>
+        <module>springcloud-eureka-7001</module>
+        <module>springcloud-eureka-7002</module>
+        <module>springcloud-eureka-7003</module>
+        <module>springcloud-provider-dept-8002</module>
+        <module>springcloud-provider-dept-8003</module>
+        <module>springcloud-consumer-dept-openfeign</module>
+        <module>springcloud-provider-dept-hystrix-8001</module>
+        <module>springcloud-provider-dept-hystrix-8001</module>
+        <module>springcloud-provider-dept-hystrix-8001</module>
+        <module>springcloud-consumer-hystrix-dashboard-9001</module>
+        <module>springcloud-provider-dept-hystrix-8002</module>
+        <module>springcloud-gateway-zuul-9900</module>
+        <module>springcloud-config-server-3001</module>
+        <module>springcloud-config-client-4001</module>
+    </modules>
+
+    <!--打包方式改成 pom，而不是 jar-->
+    <packaging>pom</packaging>
+
+    <!--存放一些总的配置的信息-->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <junit.version>4.12</junit.version>
+        <lombok.version>1.18.10</lombok.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--Spring Cloud 的依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR8</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--Spring Boot 的依赖-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.3.3.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--连接数据库的驱动-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.17</version>
+            </dependency>
+            <!--连接池-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <!--MyBatis 的 Spring Boot 启动器-->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>2.1.4</version>
+            </dependency>
+            <!--Junit 单元测试-->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <!--这些 version 一般不会写死-->
+                <version>${junit.version}</version>
+            </dependency>
+            <!--Lombok-->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <!--日志-->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.16</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
