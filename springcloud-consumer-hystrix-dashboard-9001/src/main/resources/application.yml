@@ -1,0 +1,6 @@
+server:
+  port: 9001
+# 一定要加上：
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"

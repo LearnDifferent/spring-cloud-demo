@@ -18,9 +18,9 @@ import java.util.List;
  * declare a Feign client using @FeignClient
  * value 标明 provider 的 application name(service id)
  * <p>
- * fallbackFactory 或 fallback 属性可以定义 fall back 后的处理类
- * fallback 是直接实现"原方案接口"的替代方案
- * fallbackFactory 则是实现 FallbackFactory<原方案接口> 的替代方案
+ * fallbackFactory 或 fallback 属性可以定义 fall back 后的处理类：
+ * - fallback 是直接实现"原方案接口"的替代方案
+ * - fallbackFactory 则是实现 FallbackFactory<原方案接口> 的替代方案
  * <p>
  * 使用了 Hystrix 的 fall back 模式后，消费者即使在客户端停止服务后，也能返回替代方案的 json 数据
  */
