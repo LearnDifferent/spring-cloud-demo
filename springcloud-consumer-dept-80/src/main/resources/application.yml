@@ -1,0 +1,9 @@
+server:
+  port: 80
+eureka:
+  client:
+    # 消费者只需要去获取注册列表即可，不需要注册
+    register-with-eureka: false
+    # 填写所有提供注册中心服务的地址，Ribbon 会根据负载均衡算法自动分配要访问的地址
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
