@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>MySpringCloudDemo</artifactId>
+        <groupId>org.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <!--parent 就是总工程内写好的 pom，要使用的话，还要在微服务项目中单独导入-->
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>springcloud-api</artifactId>
+    <!--从总项目定义好的 <dependencyManagement> 中导入当前项目需要的依赖-->
+    <dependencies>
+        <dependency>
+            <!--如果总工程定义的父依赖已经写了版本号，当前子项目不需要写版本号-->
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
