@@ -1,0 +1,28 @@
+server:
+  port: 9900
+spring:
+  application:
+    name: gateway-zuul
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    instance-id: zuul-9900
+zuul:
+  routes:
+    # 下面这个写什么都可以，起分组的作用
+    consumer-router:
+      # 可以写具体的 url，也可以写 serviceId（可以去源码的 ZuulRoute 的构造器查看）
+      # 就是把这个服务（url/serviceID）映射为 path 所设定的路径
+      service-id: springcloud-consumer-dept
+      path: /omg/**
+  # 屏蔽所有 application name
+  # 在源码中的属性中可以找到 private Set<String> ignoredServices
+  # 注意，如果只屏蔽某个项目名，可以不加双引号，但是如果屏蔽所有项目名，就一定要加双引号
+  ignored-services: "*"
+#  ignoredServices: springcloud-consumer-dept # 如果写成这样，就只屏蔽这一个
+  # 还可以设置公共的前缀
+  prefix: "/pre"
+
+# 为了示范需要把 localhost 映射成 example.com（和 eureka7001 一样是映射的）
