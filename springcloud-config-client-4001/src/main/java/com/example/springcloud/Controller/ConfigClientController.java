@@ -26,7 +26,7 @@ public class ConfigClientController {
 
     // 注意，因为读取了远程的配置，所以访问的时候，使用的是远程配置中的端口号
     // （这里的远程配置的端口号为 8001）
-    @RequestMapping("/config")
+    @RequestMapping
     public String getConfig() {
         return applicationName + "\t"
                 + port + "\t"

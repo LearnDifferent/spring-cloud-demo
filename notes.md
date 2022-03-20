@@ -22,9 +22,9 @@
 
 ## Spring Cloud 基础概念
 
-![](https://user-gold-cdn.xitu.io/2019/11/30/16ebc20c173ddc33?imageView2/0/w/1280/h/960/ignore-error/1)
+![](https://spring.io/images/diagram-microservices-88e01c7d34c688cb49556435c130d352.svg)
 
-图：Spring Cloud 总体框架
+> 图：Spring Cloud 总体框架
 
 Spring Cloud 简介：
 
@@ -227,9 +227,9 @@ Eureka 是一个服务发现（Service registry）框架。
 2. Eureka Server 接到请求后，会将该 Eureka Client 实例信息，从 Eureka Server 的实例注册表中删除
 3. 下线的请求不会自动完成，需要调用 `DiscoveryManager.getInstance().shutdownComponent();`
 
-![](https://user-gold-cdn.xitu.io/2019/11/20/16e86737ea057126?imageView2/0/w/1280/h/960/ignore-error/1)
+![](https://static001.infoq.cn/resource/image/8b/8b/8bf6e27c60dbfd717b6830263890368b.png)
 
-图：Eureka 架构图
+> 图：Eureka 架构图（来自：[微服务注册中心 Eureka 架构深入解读](https://www.infoq.cn/article/jldjq*3wtn2pcqtdyokh)）
 
 除了 Eureka，服务发现的组件还有：
 
@@ -290,7 +290,7 @@ Eureka 的自我保护机制（Self Preservation）：
 
 ## Eureka Server 和 Client 在项目中的使用
 
-注册中心集群：生成环境可能需要多个 Eureka Server 组成集群，比如 7001、7002 和 7003 端口的 Server 组成集群：
+注册中心集群：生产环境可能需要多个 Eureka Server 组成集群，比如 7001、7002 和 7003 端口的 Server 组成集群：
 
 * 集群可以在出问题后，自动转换 Server
 * 在演示项目中，需要端口号为 7001 的 Server 绑定 7002 和 7003；7002 和 7003 也要绑定其他的 Server
@@ -322,12 +322,15 @@ Eureka 相关代码：
 
 在理解 Open Feign 之前需要了解 RestTemplate。
 
-> RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
+> 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
+>
+> 我在 [LearnDifferent/github-stars](https://github.com/LearnDifferent/github-stars) 中，也使用过 RestTemplate，可以查看 [RestTemplate 的配置类](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/config/RestTemplateConfig.java) 和 [RestTemplate 在 Service 中的使用](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/service/impl/RepoServiceImpl.java)
 
 RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 
 * 微服务之间需要使用 RestTemplate 来完成调用
 * 相当于一个入口，用户通过这个入口来发出请求，这个入口接到请求后，交给各个服务来处理请求
+* 其实 **就是在微服务间，发送请求和响应请求**
 
 需要先在配置类中添加 RestTemplate 的 Bean，并加上 `@LoadBalanced` 负载均衡的注解，来实现（Ribbon）负载均衡的服务调用，参考：
 
@@ -410,7 +413,7 @@ Open Feign 相关代码：
 
 Ribbon 是 Netflix 公司的一个开源的 *负载均衡（Load Balance）* 项目，**是一个客户端/进程内负载均衡器，<u>运行在消费者端（集成在 Consumer 中）</u>**
 
-Load balancing / 负载均衡 / LB：
+Load balancing（负载均衡 / LB）：
 
 * Load balancing refers to the process of distributing a set of tasks over a set of resources (computing units), with the aim of making their overall processing more efficient.
 * Load balancing techniques can optimize the response time for each task, avoiding unevenly overloading compute nodes while other compute nodes are left idle.
@@ -977,7 +980,7 @@ Spring Cloud Config 能将各个应用/系统/模块的配置文件 **存放到�
 > 
 > 「启动应用」从这个「接口」中获取需要的「配置文件」，然后再进行初始化工作
 
-Spring Cloud Config 运作流程（Config 的客户端简称为「Client」，Config 的服务器简称为 Server）：
+Spring Cloud Config 运作流程（Config 的客户端简称为 Client，Config 的服务器简称为 Server）：
 
 * 【Client】--请求 URI-->【Server】
 * 【Server】--获取配置-->【Git/SVN】
@@ -986,12 +989,12 @@ Spring Cloud Config 运作流程（Config 的客户端简称为「Client」，Co
 
 Spring Cloud Config 相关 GitHub 仓库和代码：
 
-- 服务端：[springcloud-config-server-3001](./springcloud-config-server-3001)
-- 客户端（基础演示）：[springcloud-config-client-4001](./springcloud-config-client-4001)
-- 客户端（在项目中使用）：
+- Server（服务端）：[springcloud-config-server-3001](./springcloud-config-server-3001)
+- Client（客户端，用于基础演示）：[springcloud-config-client-4001](./springcloud-config-client-4001)
+- Client（客户端，用于在项目中使用）：
 	- [springcloud-eureka-7001](./springcloud-eureka-7001) 的 [bootstrap.yml](./springcloud-eureka-7001/src/main/resources/bootstrap.yml)
 	- [springcloud-provider-dept-8001](./springcloud-provider-dept-8001)  的 [bootstrap.yml](./springcloud-provider-dept-8001/src/main/resources/bootstrap.yml) 
-- [GitHub 仓库链接](https://github.com/LearnDifferent/springcloud-config-demo/blob/master/application.yml) ，在配置了服务端后，可以通过以下链接访问该仓库的配置
+- 在 Server [配置](./springcloud-config-server-3001/src/main/resources/application.yml) 了 [GitHub 配置仓库的链接](https://github.com/LearnDifferent/springcloud-config-demo/blob/master/application.yml) 后，可以通过以下链接访问该仓库的配置
 	- http://localhost:3001/application-dev.yml
 	  - http://localhost:3001/application-test.yml
 	  - http://localhost:3001/application-prod.yml
@@ -1023,6 +1026,6 @@ Spring Cloud Bus 作用：
 
 拥有了 Spring Cloud Bus 之后，我们只需要创建一个简单的请求，并且加上 @ResfreshScope 注解就能进行配置的动态修改了
 
-![](https://user-gold-cdn.xitu.io/2019/11/30/16ebc26958ea0fe7?imageView2/0/w/1280/h/960/ignore-error/1)
+![](http://blog.didispace.com/assets/5-6.png)
 
-图：Spring Cloud Bus 流程图
+> 图：Spring Cloud Bus 流程图（来自：[程序猿DD](http://blog.didispace.com/)）
