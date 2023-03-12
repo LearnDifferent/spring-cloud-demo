@@ -1,13 +1,14 @@
-# 基础
-
-## 微服务与微服务架构
+# 微服务与微服务架构
 
 微服务：
 
 * 强调的是服务的大小，关注的是某个点，是具体解决某一问题，提供对应服务的一个服务应用
 * 强调的是一个个的个体，每一个个体完成一个具体的任务或功能
 
-微服务架构：一种架构形模式，包含了多个微服务。
+微服务架构：
+
+- 一种架构形模式，包含了多个微服务
+- 根据业务拆分服务，彻底解耦，每个微服务提供单个业务功能的服务，一个服务做一件事情
 
 分布式架构（分散コンピューティング）会遇到的四个核心问题及解决方案：
 
@@ -20,9 +21,20 @@
 4. 服务挂了，怎么办？
     - 熔断机制，服务降级 
 
-## Spring Cloud 基础概念
+微服务怎么拆分？（拆分的边界？）
 
-![](https://spring.io/images/diagram-microservices-88e01c7d34c688cb49556435c130d352.svg)
+- 功能维度
+- 业务维度
+- 康威定律（考虑团队结构）
+- 拆分粒度
+
+# Spring Cloud 基础概念
+
+> 相关资料：[冒着挂科的风险也要给你们看的 Spring Cloud 入门总结](https://juejin.cn/post/6844904007975043079)或者[Spring Cloud 入门总结](https://zhuanlan.zhihu.com/p/95696180)（两个链接都是同一篇，下文会大量引用）
+
+## Spring Cloud 简介
+
+![](https://spring.io/img/extra/microservices-6.svg)
 
 > 图：Spring Cloud 总体框架
 
@@ -37,16 +49,55 @@ Spring Cloud 和 Spring Boot 的关系：
 * Cloud 协调微服务，boot 用于快速开发微服务（jar 包）。Cloud 离不开 boot，而 boot 可以单独运行
 * 也就是说，Spring Boot 专注于快速开发单个个体微服务，Spring Cloud 关注全局的微服务治理框架。
 
-Spring Cloud 抛弃了 Dubbo 的 RPC 通信，采用的是基于 HTTP 的 REST 方式：
+Spring Cloud 和 Dubbo 的区别：
 
-* Dubbo 的定位是一款 RPC 框架
-* Spring Cloud 是微服务架构的一站式解决方案
+- Spring Cloud 是微服务架构的一站式解决方案
+- Dubbo 的定位是一款 RPC 框架
+- Spring Cloud 抛弃了 Dubbo 的 RPC 通信，采用的是基于 HTTP 的 REST 方式
+- REST 没有 RPC 通信那样好的服务调用的性能，但是更加灵活
+  - 服务提供方和调用方的依赖只靠 HTTP 来连接，不存在代码级别的强依赖
+  - 所以在强调快速演化的微服务环境下，REST 更为适合。
 
-REST 没有 RPC 通信那样好的服务调用的性能，但是更加灵活——服务提供方和调用方的依赖只靠 HTTP 来连接，不存在代码级别的强依赖，所以在强调快速演化的微服务环境下，REST 更为适合。
+## RESTful HTTP 通信
 
-相关资料：[冒着挂科的风险也要给你们看的 Spring Cloud 入门总结](https://juejin.cn/post/6844904007975043079)或者[Spring Cloud 入门总结](https://zhuanlan.zhihu.com/p/95696180)（两个链接都是同一篇，下文会大量引用）
+RESTful HTTP 协议通信：
 
-## Spring Cloud 项目基本说明
+- 作用：规范了 HTTP 通信协议的标准
+- HTTP Method 约束资源操作类型：GET、POST、PUT、DELETE
+- REST 是面向资源的，所以 Method 规范操作类型，而路径一般使用名词
+  - 比如：GET `/order/${id}` 就表示查询该 id 的 order
+- 通过 HTTP 返回码来表达返回的信息，比如 200 表示成功，400 表示找不到请求路径等
+
+---
+
+**多个服务间通信** ，其实可以转换为 **如何调用第三方的 HTTP 服务** 。
+
+> 调用第三方 HTTP 服务可以使用 RestTemplate、HttpClient、OkHttp 和 JDK 的 HttpUrlConnection 等。
+
+假设现在一个 user 服务想通过 `RestTemplate` 调用 order 服务，但是 order 服务是个集群，也就是有多个 order 服务，调用哪个都可以。这就会涉及到 **负载均衡**。
+
+此时需要：
+
+1. 在 user 端配置目标服务的地址列表
+2. 根据地址列表，做一个负载均衡的计算，决定请求哪个服务
+
+> 负载均衡使用 Ribbon 组件。
+>
+> Ribbon 的作用（[下文中还会提到一次](#what-ribbon-does)）：
+>
+> 1. 解析配置中的服务器列表
+>
+> 2. 基于负载均衡的算法实现请求的分发
+
+使用 Ribbon 可以直接利用 `@LoadBalanced` 注解。
+
+比如在配置 `RestTemplate` 的 Bean 的时候加上 `@LoadBalanced` 注解，然后就会发送请求之前，拦截请求，并根据 `IRule` Bean 的配置来设置怎么发送请求。可以参考[下文](#use-ribbon)。
+
+---
+
+现在 Spring Cloud 通信一般使用的是 Open Feign。它是一个声明式的伪 RPC 客户端，可以实现面向接口编程。使用方法可以参考[下文](#open-feign)。
+
+# Spring Cloud 项目基本说明
 
 总体说明：
 
@@ -318,9 +369,9 @@ Eureka 相关代码：
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
 
-## RestTemplate
+## 了解 RestTemplate 基础概念
 
-在理解 Open Feign 之前需要了解 RestTemplate。
+在学习 [Open Feign](#open-feign) 之前需要了解 RestTemplate。
 
 > 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
 >
@@ -332,7 +383,7 @@ RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 * 相当于一个入口，用户通过这个入口来发出请求，这个入口接到请求后，交给各个服务来处理请求
 * 其实 **就是在微服务间，发送请求和响应请求**
 
-需要先在配置类中添加 RestTemplate 的 Bean，并加上 `@LoadBalanced` 负载均衡的注解，来实现（Ribbon）负载均衡的服务调用，参考：
+<span id="use-ribbon">需要先在配置类中添加 RestTemplate 的 Bean，并加上 `@LoadBalanced` 负载均衡的注解，来实现（Ribbon）负载均衡的服务调用</span>，参考：
 
 - [ConfigBean.java](./springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) 的 `public RestTemplate getRestTemplate()`
 
@@ -356,11 +407,11 @@ public boolean judge(@RequestBody Request request) {
 }
 ```
 
-## Open Feign 快速入门
+## <span id="open-feign">Open Feign 快速入门</span>
 
 > Open Feign is a Java to *HTTP client* binder
 
-> Open Feign 是声明式的 web service 客户端，对 RestTemplate 和 Ribbon 做了进一步的封装
+> Open Feign 是声明式的 web service 客户端，对 RestTemplate 和 Ribbon 做了进一步的封装，可以实现类似于 RPC 的面向接口开发
 
 使用 RestTemplate 不够方便，每次都要调用 RestRemplate 的 API，而使用 Open Feign 的话，只需要创建接口（接口上使用注解来配置），然后在其他地方注入调用就可以了（类似于 DAO 接口）。
 
@@ -377,8 +428,7 @@ public interface TestClient {
   
     // 这里一定要注意需要使用的是提供者那端的请求相对路径
     // 相当于映射被调用的服务代码
-    @RequestMapping(value = "/provider/xxx",
-    method = RequestMethod.POST)
+    @RequestMapping(value = "/provider/xxx", method = RequestMethod.POST)
     CommonResponse<List<Plan>> getPlans(@RequestBody planGetRequest request);
 }
 ```
@@ -396,6 +446,20 @@ public class TestController {
         return testClient.getPlans(request);
     }
 }
+```
+
+## Open Feign 优化配置
+
+Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](./springcloud-consumer-dept-openfeign/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
+
+```yaml
+feign:
+  # 关闭默认的 HttpClient
+  httpclient:
+    enabled: false
+  # 开启 Ok HTTP Client
+  okhttp:
+    enabled: true
 ```
 
 ## Open Feign 在项目中的使用
@@ -455,6 +519,11 @@ Load balancing（负载均衡 / LB）：
 
 * Consumer <---注册并获取服务列表---> 中介
 * Consumer ---获取服务列表后，通过 Ribbon 内部的负载均衡算法，均衡调用：---> 秒杀系统 1 /秒杀系统 2/秒杀系统 3
+
+<span id="what-ribbon-does">Ribbon 的作用</span>：
+
+1. 解析配置中的服务器列表
+2. 基于负载均衡的算法实现请求的分发
 
 ### Ribbon 对比 Nginx
 
