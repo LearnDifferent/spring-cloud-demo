@@ -12,9 +12,15 @@ eureka:
     # 填写所有提供注册中心服务的地址，Ribbon 会根据负载均衡算法自动分配要访问的地址
     service-url:
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
-# 如果 Consumer 使用了 hystrix，一定要加上这个配置，不过主启动类不需要加 @EnableCircuitBreaker
-# 如果是 Provider 的话就不用写这个配置，但是主启动类一定要加 @EnableCircuitBreaker
 feign:
+  # 如果 Consumer 使用了 hystrix，一定要加上这个配置，不过主启动类不需要加 @EnableCircuitBreaker
+  # 如果是 Provider 的话就不用写这个配置，但是主启动类一定要加 @EnableCircuitBreaker
   hystrix:
+    enabled: true
+  # 关闭默认的 HttpClient
+  httpclient:
+    enabled: false
+  # 开启 Ok HTTP Client
+  okhttp:
     enabled: true
 
