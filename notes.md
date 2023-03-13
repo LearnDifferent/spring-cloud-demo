@@ -140,8 +140,6 @@ Eureka：
 - AP 模型，优先保证高可用
 - 集群中每个节点的角色是相等的，不需要保证一致性，只要保证高可用
 
-
-
 # Spring Cloud 项目基本说明
 
 总体说明：
@@ -297,7 +295,7 @@ Eureka 是一个服务发现（Service registry）框架。
 
 服务续约（Renew）：
 
-* Eureka Client 默认会每隔 30 秒发送一次心跳来 renew（续约）
+* Eureka Client 默认会每隔 30 秒发送一次心跳（Heartbeat）来 renew（续约）
 * Renew 的目的：告知 Eureka Server 该客户端，Eureka Client 仍然存在且没有问题
 
 服务剔除（Eviction）：

@@ -28,5 +28,8 @@ eureka:
       # 这里修改 defaultZone 为自己需要的地址
       # 单个 Eureka Server 的情况下，绑定本台机器：
       # defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-      # 集群的情况下，绑定除了本台机器以外的其他 Eureka Server：
+      # 集群的情况下，绑定除了本台机器以外的其他 Eureka Server（如下所示）
+      # 不注册本机是因为，启动的时候，会先去下面配置的"注册中心"集群中发起注册，然后才是启动当前的 Eureka
+      # 如果注册了本机，就会在本机还没启动 Eureka 的时候就发起了注册。
+      # 这样虽然没有影响（因为一次不成功后会继续请求），但是就没有什么必要了
       defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
