@@ -101,14 +101,15 @@ RESTful HTTP 协议通信：
 
 ## CAP 定理
 
+> 下文来自 ChatGPT，有轻微错误，仅供参考
+
 CAP（Consistency, Availability, and Partition tolerance）用于描述分布式系统中的三个基本性能特征：一致性、可用性和分区容错性：
 
 - 一致性（Consistency）指的是所有节点在同一时间具有相同的数据
 
 - 可用性（Availability）指的是系统中的所有请求都可以得到响应，即使某个节点发生故障
 
-- 分区容错性（Partition tolerance）指的是系统在网络分区的情况下仍然可以继续
-  
+- 分区容错性（Partition tolerance）~~指的是系统在网络分区的情况下仍然可以继续~~ （注：有问题，看下面）
   - 网络分区：当网络中的一部分节点无法与另一部分节点进行通信时，网络被分割成不同的部分
 
 CAP 定理指出，<u>在分布式系统中，只能同时保证两个，而不能三个同时保证</u>。
@@ -145,13 +146,20 @@ CAP 定理指出，<u>在分布式系统中，只能同时保证两个，而不�
 
 CAP 原则又称 CAP 定理，指的是在一个分布式系统中，**一致性（Consistency）**、**可用性（Availability）**、**分区容错性（Partition tolerance）**，这三个要素<u>最多只能同时实现两点</u>，不可能三者兼顾。
 
+一致性（Consistency）：这里指的是强一致性
+
+可用性（Availability）：请求会得到响应，而不是持续的等待
+
 Partition tolerance（分区容错性）：
 
 - 网络分区（脑裂）：当网络发生异常，导致分布式系统中部分节点之间的网络延时不断增加，导致组成分布式系统的所有节点，只有部分节点之间能够进行正常通信，而另一些节点则不能
 - 分区容错性约束了一个分布式系统需要具有的如下特性：分布式系统在遇到任何网络分区故障的时候，仍然需要能够保证对外提供满足一致性和可用性的服务，除非是整个网络环境都发生了故障
-- 延伸阅读：[分布式的特性、面临的问题、中心化 & 去中心化、CAP理论、BASE理论](https://blog.csdn.net/qwesxd/article/details/108589781)
+
+简单来说，就是 **Partition tolerance（分区容错性）就是保证服务因为网络而故障的时候，业务端还能正常运行** 。实现起来，就是 **集群节点** 和 **跨区域的高可用** 。
 
 在分布式系统中，Partition tolerance 必须得到满足，所以只能在 Consistency 和 Availability 之间权衡。
+
+> 延伸阅读：[分布式的特性、面临的问题、中心化 & 去中心化、CAP理论、BASE理论](https://blog.csdn.net/qwesxd/article/details/108589781)
 
 例如：
 
