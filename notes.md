@@ -13,13 +13,13 @@
 分布式架构（分散コンピューティング）会遇到的四个核心问题及解决方案：
 
 1. 这么多服务，客户端该如何去访问？
-    - API 网关，服务路由
+   - API 网关，服务路由
 2. 这么多服务，服务之间如何进行通信
-    - HTTP，RPC 框架，异步调用
+   - HTTP，RPC 框架，异步调用
 3. 这么多服务，如何治理？
-    - 服务注册与发现，高可用
+   - 服务注册与发现，高可用
 4. 服务挂了，怎么办？
-    - 熔断机制，服务降级 
+   - 熔断机制，服务降级 
 
 微服务怎么拆分？（拆分的边界？）
 
@@ -84,11 +84,11 @@ RESTful HTTP 协议通信：
 2. 根据地址列表，做一个负载均衡的计算，决定请求哪个服务
 
 > 负载均衡使用 Ribbon 组件。
->
+> 
 > Ribbon 的作用（[下文中还会提到一次](#what-ribbon-does)）：
->
+> 
 > 1. 解析配置中的服务器列表
->
+> 
 > 2. 基于负载均衡的算法实现请求的分发
 
 使用 Ribbon 可以直接利用 `@LoadBalanced` 注解。
@@ -98,6 +98,86 @@ RESTful HTTP 协议通信：
 ---
 
 现在 Spring Cloud 通信一般使用的是 Open Feign。它是一个声明式的伪 RPC 客户端，可以实现面向接口编程。使用方法可以参考[下文](#open-feign)。
+
+## CAP 定理
+
+> 下文来自 ChatGPT
+
+CAP（Consistency, Availability, and Partition tolerance）用于描述分布式系统中的三个基本性能特征：一致性、可用性和分区容错性：
+
+- 一致性（Consistency）指的是所有节点在同一时间具有相同的数据
+
+- 可用性（Availability）指的是系统中的所有请求都可以得到响应，即使某个节点发生故障
+
+- 分区容错性（Partition tolerance）指的是系统在网络分区的情况下仍然可以继续
+  
+  - 网络分区：当网络中的一部分节点无法与另一部分节点进行通信时，网络被分割成不同的部分
+
+CAP 定理指出，<u>在分布式系统中，只能同时保证两个，而不能三个同时保证</u>。
+
+> 例如，一个典型的分布式系统可能会使用一致性和可用性的组合，以确保所有的节点在同一时间具有相同的数据，并且在任何情况下都可以提供响应。但是，这种组合不能保证系统在网络分区的情况下仍然可以继续工作。
+
+---
+
+最终一致性：
+
+- 系统中所有节点最终都会保持相同的状态，即使在网络分区的情况下也是如此
+
+- 优点：可以在网络分区的情况下继续工作
+
+- 缺点：可能需要更长的时间来达到一致性
+
+强一致性：
+
+- 所有节点在同一时间具有相同的数据
+
+- 优点：可以在更短的时间内达到一致性
+
+- 缺点：不能在网络分区的情况下继续工作
+
+> 例如，在银行的账户系统中，最终一性可能会导致客户在某个时间点看到不同的余额，但是最终会达到一致，而强一致性可以确保客户在任何时间点都看到相同的余额。
+
+如果你需要在网络分区的情况下继续工作，那么最终一致性可能是最好的选择。
+
+如果你需要在更短的时间内达到一致性，那么强一致性可能是最好的选择。
+
+---
+
+> 以下是之前整理的笔记
+
+CAP 原则又称 CAP 定理，指的是在一个分布式系统中，**一致性（Consistency）**、**可用性（Availability）**、**分区容错性（Partition tolerance）**，这三个要素<u>最多只能同时实现两点</u>，不可能三者兼顾。
+
+Partition tolerance（分区容错性）：
+
+- 网络分区（脑裂）：当网络发生异常，导致分布式系统中部分节点之间的网络延时不断增加，导致组成分布式系统的所有节点，只有部分节点之间能够进行正常通信，而另一些节点则不能
+- 分区容错性约束了一个分布式系统需要具有的如下特性：分布式系统在遇到任何网络分区故障的时候，仍然需要能够保证对外提供满足一致性和可用性的服务，除非是整个网络环境都发生了故障
+- 延伸阅读：[分布式的特性、面临的问题、中心化 & 去中心化、CAP理论、BASE理论](https://blog.csdn.net/qwesxd/article/details/108589781)
+
+在分布式系统中，Partition tolerance 必须得到满足，所以只能在 Consistency 和 Availability 之间权衡：
+
+- Eureka 保证 AP：
+  - <u>Eureka 各个节点是相等的</u>，如果发现节点连接失败，就自动转换到其他节点，也就是说，只要还有一台 Eureka，就能确保服务的可用性（保证 Availability）
+  - 只不过，无法保证 Eureka 返回的信息是最新的（牺牲了 Consistency）
+- Zookeeper 保证 CP：
+  - 如果主要的 Server（Master）出现问题，就要重新选举，选举可能会耗费时间，导致服务暂时不可用（牺牲 Availability）
+  - 但是这样可以保证所有数据备份，在同一时刻的值是相等的（要不无法读取，要不就读取最新的，保证 Consistency）
+
+可以参考 [下文的 Eureka 部分](#eureka-ap)。
+
+---
+
+CAP定理（ていり）：
+
+- ノード間のデータ複製において、同時に次の3つの保証を提供することはできない
+- 一貫性 (Consistency)
+  - すべてのデータ読み込みにおいて、最新の書き込みデータもしくはエラーのどちらかを受け取る
+  - Every read receives the most recent write or an error
+- 可用性 (Availability)
+  - ノード障害により生存ノードの機能性は損なわれない。つまり、ダウンしていないノードが常に応答を返す。単一障害点が存在しないことが必要
+  - Every request receives a (non-error) response, without the guarantee that it contains the most recent write
+- 分断耐性 (Partition-tolerance)
+  - システムは任意の通信障害などによるメッセージ損失に対し、継続して動作を行う。通信可能なサーバーが複数のグループに分断されるケース（ネットワーク分断）を指し、1つのハブに全てのサーバーがつながっている場合は、これは発生しない。ただし、そのようなネットワーク設計は単一障害点をもつことになり、可用性が成立しない。RDBではそもそもデータベースを分割しないので、このような障害とは無縁である。
+  - The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes
 
 ## 服务管理
 
@@ -149,7 +229,6 @@ Eureka：
 * 项目命名类似 [springcloud-provider-dept-8001](./springcloud-provider-dept-8001) ，代表是 dept 的 provider，端口号为 8001
 * 每一个 Module 中的 Spring Boot 项目都需要创建一个 controller，来让其他的服务访问
 
-
 Spring Cloud 架构的使用步骤：
 
 1. 导入依赖
@@ -164,19 +243,19 @@ Spring Cloud 架构的使用步骤：
 * SpringCloud：Hoxton.SR8
 * SpringBoot：2.3.3.RELEASE
 * 以下版本全为：2.2.5.RELEASE
-    * Eureka Server：spring-cloud-starter-netflix-eureka-server
-    * Provider：spring-cloud-starter-netflix-eureka-client
-    * Consumer 和 Ribbon：
-        * spring-cloud-starter-netflix-eureka-client
-        * spring-cloud-starter-netflix-ribbon
-    * Open Feign：spring-cloud-starter-openfeign
-    * Hystrix：
-        * spring-cloud-starter-netflix-hystrix
-        * spring-cloud-starter-netflix-hystrix-dashboard
-    * Zuul：spring-cloud-starter-netflix-zuul
-    * Config：
-        * spring-cloud-config-server
-        * spring-cloud-starter-config
+  * Eureka Server：spring-cloud-starter-netflix-eureka-server
+  * Provider：spring-cloud-starter-netflix-eureka-client
+  * Consumer 和 Ribbon：
+    * spring-cloud-starter-netflix-eureka-client
+    * spring-cloud-starter-netflix-ribbon
+  * Open Feign：spring-cloud-starter-openfeign
+  * Hystrix：
+    * spring-cloud-starter-netflix-hystrix
+    * spring-cloud-starter-netflix-hystrix-dashboard
+  * Zuul：spring-cloud-starter-netflix-zuul
+  * Config：
+    * spring-cloud-config-server
+    * spring-cloud-starter-config
 
 ---
 
@@ -244,8 +323,8 @@ VALUES
 然而这是还是有问题：
 
 1. 房东注册之后如果不想卖房子了怎么办？
-    1. 我们是不是需要让房东<u>定期续约</u>？
-    2. 如果房东不进行续约是不是要将他们从中介那里的注册列表中<u>移除</u>？
+   1. 我们是不是需要让房东<u>定期续约</u>？
+   2. 如果房东不进行续约是不是要将他们从中介那里的注册列表中<u>移除</u>？
 2. <u>租客</u>是不是也要进行<u>注册</u>呢？
 3. 中介可不可以做<u>连锁店</u>呢？如果这一个店因为某些不可抗力因素而无法使用，那么我们是否可以换一个连锁店呢？
 
@@ -262,11 +341,11 @@ VALUES
 What is Service discovery?
 
 * Service Discovery is the process of how microservices discover each other over a network. There are two main components of it in terms of Eureka service:
-    * Eureka server (service registry): It is a server that stores the addresses (host and ports) of all the registered microservices.
-    * Eureka Client: Its a microservice registered on the central server and it updates and retrieves addresses to/from the central Eureka server.
+  * Eureka server (service registry): It is a server that stores the addresses (host and ports) of all the registered microservices.
+  * Eureka Client: Its a microservice registered on the central server and it updates and retrieves addresses to/from the central Eureka server.
 * Eureka provides service discovery in a microservices architecture. This involves two steps on a high level:
-    * Services registers themselves on the Eureka server and details like name, host, and port are stored there.
-    * Details of other registered microservices become available for the registered service.
+  * Services registers themselves on the Eureka server and details like name, host, and port are stored there.
+  * Details of other registered microservices become available for the registered service.
 
 Eureka 是一个服务发现（Service registry）框架。
 
@@ -281,10 +360,10 @@ Eureka 是一个服务发现（Service registry）框架。
 * 服务提供者（Service Provider）：向外界提供能够执行的服务
 * 服务消费者（Service Consumer）：使用服务的用户
 * 服务中介：
-    * 服务提供者和服务消费者之间的“桥梁”
-    * 服务提供者和消费者都可以在中介那里注册
-    * 服务提供者需要定期续约，否则会被移除
-    * 服务消费者需要使用服务的时候会去找中介
+  * 服务提供者和服务消费者之间的“桥梁”
+  * 服务提供者和消费者都可以在中介那里注册
+  * 服务提供者需要定期续约，否则会被移除
+  * 服务消费者需要使用服务的时候会去找中介
 
 ---
 
@@ -306,12 +385,12 @@ Eureka 是一个服务发现（Service registry）框架。
 
 * Eureka Client 会从 Eureka Server 那里 fetch registries（获取注册表信息），并将注册表信息缓存在本地
 * Eureka Client 会使用注册表信息查找其他服务，从而进行远程调用
-    * 注册表信息默认每 30 秒更新一次
-    * 如果 Eureka Client 收到更新的信息与之前缓存中的不符，客户端会自动处理
-    * 如果注册列表信息无法及时匹配，Eureka Client 会重新获取整个注册表信息
+  * 注册表信息默认每 30 秒更新一次
+  * 如果 Eureka Client 收到更新的信息与之前缓存中的不符，客户端会自动处理
+  * 如果注册列表信息无法及时匹配，Eureka Client 会重新获取整个注册表信息
 * Eureka Server 会存储注册列表信息
-    * Eureka Server 对整个注册表以及每个应用程序的信息进行了压缩
-    * 压缩内容和没有压缩的内容完全相同
+  * Eureka Server 对整个注册表以及每个应用程序的信息进行了压缩
+  * 压缩内容和没有压缩的内容完全相同
 * Eureka Client 和 Eureka Server 可以使用 JSON / XML 格式进行通讯
 * 默认的情况下 Eureka Server 使用压缩 JSON 格式来获取注册列表的信息
 
@@ -332,41 +411,9 @@ Eureka 是一个服务发现（Service registry）框架。
 
 ## Eureka 相关进阶概念
 
-> Netflix 在设计的时候，遵循了 AP 原则。
-
-CAP定理（ていり）：
-
-* ノード間のデータ複製において、同時に次の3つの保証を提供することはできない
-* 一貫性 (Consistency)
-    * すべてのデータ読み込みにおいて、最新の書き込みデータもしくはエラーのどちらかを受け取る
-    * Every read receives the most recent write or an error
-* 可用性 (Availability)
-    * ノード障害により生存ノードの機能性は損なわれない。つまり、ダウンしていないノードが常に応答を返す。単一障害点が存在しないことが必要
-    * Every request receives a (non-error) response, without the guarantee that it contains the most recent write
-* 分断耐性 (Partition-tolerance)
-    * システムは任意の通信障害などによるメッセージ損失に対し、継続して動作を行う。通信可能なサーバーが複数のグループに分断されるケース（ネットワーク分断）を指し、1つのハブに全てのサーバーがつながっている場合は、これは発生しない。ただし、そのようなネットワーク設計は単一障害点をもつことになり、可用性が成立しない。RDBではそもそもデータベースを分割しないので、このような障害とは無縁である。
-    * The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes
-
----
-
-CAP 原则又称 CAP 定理，指的是在一个分布式系统中，**一致性（Consistency）**、**可用性（Availability）**、**分区容错性（Partition tolerance）**，这三个要素<u>最多只能同时实现两点</u>，不可能三者兼顾。
-
-Partition tolerance（分区容错性）：
-
-* 网络分区（脑裂）：当网络发生异常，导致分布式系统中部分节点之间的网络延时不断增加，导致组成分布式系统的所有节点，只有部分节点之间能够进行正常通信，而另一些节点则不能
-* 分区容错性约束了一个分布式系统需要具有的如下特性：分布式系统在遇到任何网络分区故障的时候，仍然需要能够保证对外提供满足一致性和可用性的服务，除非是整个网络环境都发生了故障
-* 延伸阅读：[分布式的特性、面临的问题、中心化 & 去中心化、CAP理论、BASE理论](https://blog.csdn.net/qwesxd/article/details/108589781)
-
-在分布式系统中，Partition tolerance 必须得到满足，所以只能在 Consistency 和 Availability 之间权衡：
-
-* Eureka 保证 AP：
-    * <u>Eureka 各个节点是相等的</u>，如果发现节点连接失败，就自动转换到其他节点，也就是说，只要还有一台 Eureka，就能确保服务的可用性（保证 Availability）
-    * 只不过，无法保证 Eureka 返回的信息是最新的（牺牲了 Consistency）
-* Zookeeper 保证 CP：
-    * 如果主要的 Server（Master）出现问题，就要重新选举，选举可能会耗费时间，导致服务暂时不可用（牺牲 Availability）
-    * 但是这样可以保证所有数据备份，在同一时刻的值是相等的（要不无法读取，要不就读取最新的，保证 Consistency）
-
-也就是说，**Eureka 可以应对网络故障导致部分节点失联的情况，而不会像 Zookeeper 那样整个注册服务瘫痪**。
+> Netflix 在设计的时候，<span id='eureka-ap'>遵循了 AP 原则</span>。
+> 
+> **Eureka 可以应对网络故障导致部分节点失联的情况**，而不会像 Zookeeper 那样整个注册服务瘫痪。
 
 ***
 
@@ -376,6 +423,7 @@ Eureka 的自我保护机制（Self Preservation）：
 * 为什么使用：有些时候只是网络故障导致微服务与 Eureka 之间无法通信，而微服务本身没有问题，此时不应该在 Eureka Server 中注销该服务，所以有了自我保护机制
 
 > 默认在 15 分钟内超过 85% 的节点都没有正常的心跳，Eureka 就会认为客户端与注册中心出现了网络故障，此时有以下情况：
+> 
 > 1. Eureka 不再从注册中心剔除其注册列表中的实例（即使过了 90秒 也不会）
 > 2. Eureka 仍然能够接受新服务的注册和查询请求，但是不会同步到其他节点上，只保证当前节点的可用性
 > 3. 当网络恢复稳定，当前实例新的注册信息再同步到其他节点中
@@ -417,7 +465,7 @@ Eureka 相关代码：
 在学习 [Open Feign](#open-feign) 之前需要了解 RestTemplate。
 
 > 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
->
+> 
 > 我在 [LearnDifferent/github-stars](https://github.com/LearnDifferent/github-stars) 中，也使用过 RestTemplate，可以查看 [RestTemplate 的配置类](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/config/RestTemplateConfig.java) 和 [RestTemplate 在 Service 中的使用](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/service/impl/RepoServiceImpl.java)
 
 RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
@@ -434,7 +482,6 @@ RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 
 - [ConsumerController.java](./springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
 
-
 再比如，这个时候「消费者 B」需要调用「提供者 A」所提供的服务时，需要这么写：
 
 ```java
@@ -442,7 +489,7 @@ RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 private RestTemplate restTemplate;
 // 这里是提供者 A 的 ip 地址，但是如果使用了 Eureka 那么就应该是提供者 A 的 application name
 private static final String SERVICE_PROVIDER_A = "http://localhost:8081";
- 
+
 @PostMapping("/judge")
 public boolean judge(@RequestBody Request request) {
     String url = SERVICE_PROVIDER_A + "/service1";
@@ -468,7 +515,7 @@ public boolean judge(@RequestBody Request request) {
 // 使用 @FeignClient 注解来指定提供者的名字
 @FeignClient(value = "eureka-client-provider")
 public interface TestClient {
-  
+
     // 这里一定要注意需要使用的是提供者那端的请求相对路径
     // 相当于映射被调用的服务代码
     @RequestMapping(value = "/provider/xxx", method = RequestMethod.POST)
@@ -483,7 +530,7 @@ public interface TestClient {
 public class TestController {
     @Autowired
     private TestClient testClient;
-    
+
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public CommonResponse<List<Plan>> get(@RequestBody planGetRequest request) {
         return testClient.getPlans(request);
@@ -525,8 +572,8 @@ Load balancing（负载均衡 / LB）：
 * Load balancing refers to the process of distributing a set of tasks over a set of resources (computing units), with the aim of making their overall processing more efficient.
 * Load balancing techniques can optimize the response time for each task, avoiding unevenly overloading compute nodes while other compute nodes are left idle.
 * Load balancing is the subject of research in the field of parallel computers. Two main approaches exist:
-    * static algorithms, which do not take into account the state of the different machines
-    * dynamic algorithms, which are usually more general and more efficient, but require exchanges of information between the different computing units, at the risk of a loss of efficiency.
+  * static algorithms, which do not take into account the state of the different machines
+  * dynamic algorithms, which are usually more general and more efficient, but require exchanges of information between the different computing units, at the risk of a loss of efficiency.
 
 サーバロードバランシング（Server Load Balancing）：
 
@@ -537,10 +584,10 @@ Load balancing（负载均衡 / LB）：
 集中式与进程内负载均衡的区别：
 
 * 集中式负载均衡：
-    * 在 consumer 和 provider 之间使用独立的负载均衡设施（可以是硬件，如 F5；也可以是软件，如 nginx）
-    * 由该设施负责把「访问请求」通过某种策略转发至 provider
+  * 在 consumer 和 provider 之间使用独立的负载均衡设施（可以是硬件，如 F5；也可以是软件，如 nginx）
+  * 由该设施负责把「访问请求」通过某种策略转发至 provider
 * 进程内负载均衡/进程内 LB：
-    * 将负载均衡逻辑集成到 consumer，consumer 从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选择出一个合适的服务器（provider）
+  * 将负载均衡逻辑集成到 consumer，consumer 从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选择出一个合适的服务器（provider）
 * Ribbon 就属于后者，它只是一个类库，集成于 consumer 进程，consumer 通过它来获取到 provider 的地址。
 
 拓展阅读：[很全！浅谈几种常用负载均衡架构](https://cloud.tencent.com/developer/article/1437969)
@@ -573,7 +620,7 @@ Load balancing（负载均衡 / LB）：
 Nginx（反向代理服务器）和 Ribbon 的对比：
 
 * <u>Nginx 是集中式的负载均衡器</u>，它会将所有请求都集中起来，然后再进行负载均衡
-    * 在 Nginx 中，请求是先进入独立的负载均衡器，再负载均衡调度多个系统
+  * 在 Nginx 中，请求是先进入独立的负载均衡器，再负载均衡调度多个系统
 * Ribbon 是先在（消费者）客户端进行负载均衡，再发送请求到各个（服务提供者）系统
 
 ## Ribbon 的几种负载均衡算法及项目中的配置
@@ -618,20 +665,18 @@ Hystrix 就是一个能进行 **熔断（meltdown）** 和 **降级（downgrade�
 * Hystrix 能够<u>隔离服务之间的访问点</u>，<u>停止服务之间的级联故障</u>并<u>提供后备选项</u>
 
 > マイクロサービスでAPI通信しているときに、一部で通信エラーが発生した場合に
-アクセスを遮断して切り離す必要があります
+> アクセスを遮断して切り離す必要があります
 > その際に用いられるのがサーキットブレイカー（Circuit Breaker/熔断器）です
->
+> 
 > In a distributed environment, inevitably some of the many service dependencies will fail. Hystrix is a library that helps you control the interactions between these distributed services by adding latency tolerance and fault tolerance logic. Hystrix does this by isolating points of access between the services, stopping cascading failures across them, and providing fallback options, all of which improve your system’s overall resiliency.
 > 
 > Hystrix是一个用于处理分布式系统的延迟和容错的开源库。在分布式系统里，许多依赖不可避免的会调用失败，比如请求超时，处理异常等等，Hystirx能够保证在一个依赖问题的情况下，不会导致整体服务失败，避免级联故障。以提高分布式系统的弹性。
-
 
 > Netflix Hystrixはフォールトトレランス(障害が起きてもサービスを継続する)のためのライブラリで、サーキットブレイカーの実装が含まれています
 > 
 > Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
 > 
 > Hystrix 又被称为“断路器/熔断器” ，他本身就是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控（类似于熔断保险丝），向调用方法返回一个服务预期的，可处理的备选响应（FallBack），而不是长时间的等待或者抛出调用方法无法处理的异常，这样就可以保证了服务调用方的线程不会被长时间的占用，从而避免了故障在分布式系统的蔓延，甚至雪崩
-
 
 Hystrix is designed to do the following:
 
@@ -656,7 +701,7 @@ Hystrix is designed to do the following:
 * 【服务 A】--调用-->【服务 B】--调用-->【服务 C】
 * 如果服务 C 因为某些原因出错，就会有大量请求阻塞在 C 这里
 * 此时 C 无法返回响应给 B，那 B 也会阻塞，导致 A 也阻塞崩溃
-    * 阻塞崩溃：请求会消耗占用系统的线程、IO 等资源，消耗完了，系统服务器就会崩溃
+  * 阻塞崩溃：请求会消耗占用系统的线程、IO 等资源，消耗完了，系统服务器就会崩溃
 * 这种服务器接连崩溃的情况，就是服务雪崩
 
 熔断：
@@ -664,7 +709,6 @@ Hystrix is designed to do the following:
 * 熔断用于解决服务雪崩，类似于“跳闸”
 * 当指定时间窗内的请求失败率达到设定阈值时，系统将通过 *断路器* 直接将此请求链路断开
 * Hystrix 中的<u>断路器模式</u>就属于熔断
-
 
 使用简单的 @HystrixCommand 注解来标注某个方法，这样 Hystrix 就会使用 *断路器* 来“包装”这个方法，每当调用时间超过指定时间时(默认为1000ms)，断路器将会中断对这个方法的调用。
 
@@ -699,13 +743,12 @@ public News getHystrixNews(@PathVariable("id") int id) {
 }
 ```
 
-
 ---
 
 舱壁模式：
 
 * 在不使用舱壁模式的情况下，服务 A 调用服务 B，这种调用默认的是使用同一批线程来执行的
-    * 在一个服务出现性能问题的时候，就会出现所有线程被刷爆并等待处理工作，同时阻塞新请求，最终导致程序崩溃
+  * 在一个服务出现性能问题的时候，就会出现所有线程被刷爆并等待处理工作，同时阻塞新请求，最终导致程序崩溃
 * 而舱壁模式会将远程资源调用隔离在他们自己的线程池中，以便可以控制单个表现不佳的服务，而不会使该程序崩溃
 
 Hystrix 仪表盘：
@@ -717,11 +760,11 @@ Hystrix 仪表盘：
 项目中的相关代码：
 
 - Provider 端：
-	- [springcloud-provider-dept-hystrix-8001](./springcloud-provider-dept-hystrix-8001)
-	- [springcloud-provider-dept-hystrix-8002](./springcloud-provider-dept-hystrix-8002)
+  - [springcloud-provider-dept-hystrix-8001](./springcloud-provider-dept-hystrix-8001)
+  - [springcloud-provider-dept-hystrix-8002](./springcloud-provider-dept-hystrix-8002)
 - Consumer 端：
-	- 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
-	- Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](./springcloud-consumer-hystrix-dashboard-9001)
+  - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
+  - Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](./springcloud-consumer-hystrix-dashboard-9001)
 
 参考资料：[Spring BootでCircuit Breaker(Spring Cloud Netflix Hystrix)を試す](http://pppurple.hatenablog.com/entry/2017/01/11/235814)
 
@@ -887,16 +930,16 @@ Router 是 Zuul 的基础功能，Filter 是 Zuul 的进阶功能。因为所有
 过滤器类型及请求的生命周期：
 
 * "Pre" Filters
-    * Request 刚进来，还没有被路由（路由：route (verb)，表示按路线/映射路径发送）这段期间的过滤器
-    * 实现身份验证、在集群中选择请求的微服务、记录调试信息等
+  * Request 刚进来，还没有被路由（路由：route (verb)，表示按路线/映射路径发送）这段期间的过滤器
+  * 实现身份验证、在集群中选择请求的微服务、记录调试信息等
 * "Routing" Filter(s)
-    * 将请求（request）根据「路由策略」，路由（routing）到微服务的过滤器
-    * 用于创建“发送给微服务的请求”，并使用 Apache HttpClient 或 Netfilx Ribbon 请求微服务
+  * 将请求（request）根据「路由策略」，路由（routing）到微服务的过滤器
+  * 用于创建“发送给微服务的请求”，并使用 Apache HttpClient 或 Netfilx Ribbon 请求微服务
 * "Post" Filters
-    * 在请求到达微服务之后，在 Response 之前执行过滤的过滤器
-    * 用来为响应添加标准的 HTTP Header、收集统计信息和指标、将响应从微服务发送给客户端等
+  * 在请求到达微服务之后，在 Response 之前执行过滤的过滤器
+  * 用来为响应添加标准的 HTTP Header、收集统计信息和指标、将响应从微服务发送给客户端等
 * "Error" Filter
-    * 在所有阶段，发生错误时执行该过滤器
+  * 在所有阶段，发生错误时执行该过滤器
 
 ![](https://images2017.cnblogs.com/blog/285763/201709/285763-20170918111945728-545715096.png)
 
@@ -944,7 +987,7 @@ public class PreRequestFilter extends ZuulFilter {
     public String filterType() {
         return FilterConstants.PRE_TYPE;
     }
-    
+
     // 指定过滤顺序：越小越先执行，返回 0 表示第一个执行
     // 其实也不是真的第一个执行，因为在 Zuul 内置的其他过滤器会先执行
     // 内置的过滤器无法更改，比如：SERVLET_DETECTION_FILTER_ORDER = -3
@@ -958,7 +1001,7 @@ public class PreRequestFilter extends ZuulFilter {
     public boolean shouldFilter() {
         return true;
     }
-    
+
     // 如果过滤器允许通过，就要确定过滤时执行的策略
     @Override
     public Object run() throws ZuulException {
@@ -980,19 +1023,19 @@ public class AccessLogFilter extends ZuulFilter {
     public String filterType() {
         return FilterConstants.POST_TYPE;
     }
-    
+
     // SEND_RESPONSE_FILTER_ORDER 是最后一个过滤器
     // 比最后一个过滤器少 1 个单位，代表在最后一个过滤器之前执行
     @Override
     public int filterOrder() {
         return FilterConstants.SEND_RESPONSE_FILTER_ORDER - 1;
     }
-    
+
     @Override
     public boolean shouldFilter() {
         return true;
     }
-    
+
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
@@ -1007,7 +1050,6 @@ public class AccessLogFilter extends ZuulFilter {
     }
 }
 ```
-
 
 ---
 
@@ -1030,23 +1072,23 @@ public class AccessLogFilter extends ZuulFilter {
 public class RouteFilter extends ZuulFilter {
     // 定义一个令牌桶，每秒产生2个令牌，即每秒最多处理2个请求
     private static final RateLimiter RATE_LIMITER = RateLimiter.create(2);
-    
+
     @Override
     public String filterType() {
         return FilterConstants.PRE_TYPE;
     }
- 
+
     @Override
     public int filterOrder() {
         return -5;
     }
- 
+
     @Override
     public Object run() throws ZuulException {
         log.info("放行");
         return null;
     }
- 
+
     @Override
     public boolean shouldFilter() {
         RequestContext context = RequestContext.getCurrentContext();
@@ -1072,16 +1114,16 @@ public class RouteFilter extends ZuulFilter {
 为什么要使用进行配置管理？
 
 * 为了避免去每个应用下，单独寻找并修改配置文件，再重启应用的麻烦
-    * 微服务系统中的 Consumer 、Provider 、Eureka Server、Zuul 系统都会持有自己的配置
-    * 在项目运行的时候，可能需要更改某些应用的配置
+  * 微服务系统中的 Consumer 、Provider 、Eureka Server、Zuul 系统都会持有自己的配置
+  * 在项目运行的时候，可能需要更改某些应用的配置
 * 重启应用来更新配置，会让服务无法访问，直接抛弃了可用性，所以对于分布式系统来说，根本就不应该去每个应用下去分别修改配置文件
 
 解决方法：
 
 * 既能对配置文件统一地进行管理，又能在项目运行时动态修改配置文件：
-    * Spring Cloud Config
-    * disconf
-    * Apollo
+  * Spring Cloud Config
+  * disconf
+  * Apollo
 
 Spring Cloud Config 能将各个应用/系统/模块的配置文件 **存放到统一的地方并进行管理** ：
 
@@ -1104,14 +1146,14 @@ Spring Cloud Config 相关 GitHub 仓库和代码：
 - Server（服务端）：[springcloud-config-server-3001](./springcloud-config-server-3001)
 - Client（客户端，用于基础演示）：[springcloud-config-client-4001](./springcloud-config-client-4001)
 - Client（客户端，用于在项目中使用）：
-	- [springcloud-eureka-7001](./springcloud-eureka-7001) 的 [bootstrap.yml](./springcloud-eureka-7001/src/main/resources/bootstrap.yml)
-	- [springcloud-provider-dept-8001](./springcloud-provider-dept-8001)  的 [bootstrap.yml](./springcloud-provider-dept-8001/src/main/resources/bootstrap.yml) 
+  - [springcloud-eureka-7001](./springcloud-eureka-7001) 的 [bootstrap.yml](./springcloud-eureka-7001/src/main/resources/bootstrap.yml)
+  - [springcloud-provider-dept-8001](./springcloud-provider-dept-8001)  的 [bootstrap.yml](./springcloud-provider-dept-8001/src/main/resources/bootstrap.yml) 
 - 在 Server [配置](./springcloud-config-server-3001/src/main/resources/application.yml) 了 [GitHub 配置仓库的链接](https://github.com/LearnDifferent/springcloud-config-demo/blob/master/application.yml) 后，可以通过以下链接访问该仓库的配置
-	- http://localhost:3001/application-dev.yml
-	  - http://localhost:3001/application-test.yml
-	  - http://localhost:3001/application-prod.yml
-	  - http://localhost:3001/config-eureka-server.yml
-	  - http://localhost:3001/config-provider-dept.yml
+  - http://localhost:3001/application-dev.yml
+    - http://localhost:3001/application-test.yml
+    - http://localhost:3001/application-prod.yml
+    - http://localhost:3001/config-eureka-server.yml
+    - http://localhost:3001/config-provider-dept.yml
 
 参考资料：
 
