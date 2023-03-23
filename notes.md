@@ -469,8 +469,6 @@ Eureka 的自我保护机制（Self Preservation）：
 
 可以登陆 `Eureka网址/eureka/apps` 路径，查看注册在 Eureka 上的信息。
 
-
-
 更多关于 Eureka 的知识（初始注册策略等），可以查看文章：[深入浅出 Spring Cloud 之 Eureka](https://juejin.cn/post/6844904001444511758)
 
 ## Eureka Server 和 Client 在项目中的使用
@@ -697,9 +695,9 @@ public IRule rule() {
 
 在 Ribbon 中还可以自定义负载均衡算法，需要实现 IRule 接口，然后修改配置文件或者，自定义 Java Config 类（Java Config 类要单独一个目录和类），然后把 `@RibbonClient(name = "自定义名称", configuration = 该自定义算法所在的类.class)` 注解放在启动类上，可以 [参考这里](https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-ribbon.html)。
 
-# Hystrix：熔断和降级
+# 熔断和降级 Hystrix
 
-## Hystrix 相关基础
+## 熔断和降级 / Hystrix - 相关基础
 
 Hystrix 就是一个能进行 **熔断（meltdown）** 和 **降级（downgrade）** 的库，通过使用它能提高整个系统的弹性：
 
@@ -731,9 +729,37 @@ Hystrix is designed to do the following:
 
 [Hystrix 使用手册 | 官方文档翻译](https://www.cnblogs.com/flashsun/p/12579367.html)
 
-## Hystrix 重点概念
+## 熔断和降级 / Hystrix 重点概念
 
-**熔断和降级**：
+熔断：
+
+- 目的：熔断是为了避免引起更大的风险，是一种保护策略
+
+- 比如说，服务 A 要等待服务 B 返回结果。如果 B 出现故障，那么 A 也会被阻塞。如果请求很多的情况下，就会出现请求堆积。这样资源就会一直无法释放，就会导致雪崩效应
+
+降级：
+
+- 降级：主方案行不通的时候，采用的备用方案。
+
+- 假设服务出现了异常，此时可以：
+
+- 1. 将异常抛给用户
+  
+  2. 返回一个默认的兜底数据
+  
+  3. 返回“系统繁忙”给用户
+
+- 降级的分类：
+  
+  - 主动降级：通过降低服务的部分可用，来提升核心服务的可用。（购物大促的时候，将评论等功能下线，优先保证购买等核心功能）
+  
+  - 被动降级：熔断降级、限流降级
+
+---
+
+> 下面是以前的笔记
+
+熔断和降级：
 
 - 服务熔断是在 Provider 处理
 - 服务降级是在 Consumer 处理
@@ -798,6 +824,67 @@ Hystrix 仪表盘：
 
 * 用来实时监控 Hystrix 的各项指标信息
 
+## Hystrix 的降级方案
+
+> 下面的代码可以查看 [springcloud-provider-dept-hystrix-8003](./springcloud-provider-dept-hystrix-8003) 。
+> 
+> OpenFeign 的降级方法可以查看 [springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign) 。一般如果在 OpenFeign 的服务中，还有一套单独的 Hystrix，那 OpenFeign 和 Hystrix 都需要配置降级方案。
+
+**1. 熔断触发降级**
+
+```java
+// Hystrix 配置
+@HystrixCommand(
+        // 配置熔断策略
+        commandProperties = {
+                // 具体的配置要到 HystrixCommandProperties 类中的 HystrixCommandProperties 方法中查找：
+                // 比如，找到 circuitBreaker.enabled 属性，设定为 true，表示开启熔断
+                @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),
+                // circuitBreaker.requestVolumeThreshold 请求次数超过__次
+                @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+                // circuitBreaker.sleepWindowInMilliseconds 熔断的时间超过__毫秒
+                @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+                // circuitBreaker.errorThresholdPercentage 异常率超过__%
+                @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50")
+        },
+        // 降级的方法
+        fallbackMethod = "meltdownFallback"
+}
+
+```
+
+**当触发了熔断之后，请求不会走到正常的方法，而是会到降级的方法中：**
+
+- 默认触发熔断的条件是：10s 之内，发起了 20 次请求，失败率超过 50% 就会触发熔断
+
+**熔断有一个自动恢复机制：**
+
+- 默认的恢复时间：5s 后自动回复
+
+---
+
+**2. 请求超时触发降级**
+
+```java
+@HystrixCommand(
+        commandProperties = {
+                // 配置请求超时的时间（单位：毫秒）
+                @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
+        },
+        fallbackMethod = "timeoutFallback"
+)
+```
+
+---
+
+**3. 资源隔离触发降级**
+
+资源隔离主要是 CPU、内测和线程的隔离（隔离可以分为平台隔离、部署隔离、业务隔离、服务隔离、资源隔离）。
+
+假设没有熔断和降级的情况下，很多请求发送到已经不可用的服务中。这些堆积的请求占用的就是线程池的资源。当线程池的资源被耗光后，后续的请求就无法进来。
+
+> 暂时先知道有这回事就好了
+
 ## Hystrix 的使用
 
 项目中的相关代码：
@@ -805,6 +892,7 @@ Hystrix 仪表盘：
 - Provider 端：
   - [springcloud-provider-dept-hystrix-8001](./springcloud-provider-dept-hystrix-8001)
   - [springcloud-provider-dept-hystrix-8002](./springcloud-provider-dept-hystrix-8002)
+  - [springcloud-provider-dept-hystrix-8003](./springcloud-provider-dept-hystrix-8003)
 - Consumer 端：
   - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
   - Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](./springcloud-consumer-hystrix-dashboard-9001)
