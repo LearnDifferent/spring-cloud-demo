@@ -1,0 +1,9 @@
+﻿server:
+  port: 9800
+spring:
+  application:
+    name: spring-cloud-gateway
+  cloud:
+    gateway:
+      routes:
+        # 可以配置多个路由
