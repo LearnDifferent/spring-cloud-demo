@@ -257,7 +257,7 @@ Eureka：
 - AP 模型，优先保证高可用
 - 集群中每个节点的角色是相等的，不需要保证一致性，只要保证高可用
 
-## 微服务网关
+## <span id='gateway'>微服务网关</span>
 
 **<u>为什么要使用微服务网关？</u>**
 
@@ -692,6 +692,7 @@ Ribbon 中有多种负载均衡调度算法，其默认是使用的 RoundRobinRu
 * RoundRobinRule（轮询策略）：以线性轮询方式获取服务，如果第一次轮询没有找到可用的 provider，就继续轮寻；如果轮询超过了 10 轮还没有找到，就返回 null
 * RandomRule（随机策略）：从所有可用的 provider 中随机选择一个。
 * RetryRule（重试策略）：先按照 RoundRobinRule 策略获取 provider，若获取失败，则在指定的时限（默认为 500 毫秒）内重试
+* Weighted Random（加权随机）
 
 如果要使用其他负载均衡算法，可以在配置文件中修改，或者在 Java 的配置类中覆盖默认规则：
 
@@ -754,7 +755,7 @@ Hystrix is designed to do the following:
 
 熔断：
 
-- 目的：熔断是为了避免引起更大的风险，是一种保护策略
+- 目的：熔断是为了避免引起更大的风险，是一种保护策略。实现服务隔离也是熔断的目的之一。
 
 - 比如说，服务 A 要等待服务 B 返回结果。如果 B 出现故障，那么 A 也会被阻塞。如果请求很多的情况下，就会出现请求堆积。这样资源就会一直无法释放，就会导致雪崩效应
 
@@ -777,14 +778,6 @@ Hystrix is designed to do the following:
   - 被动降级：熔断降级、限流降级
 
 ---
-
-> 下面是以前的笔记
-
-熔断和降级：
-
-- 服务熔断是在 Provider 处理
-- 服务降级是在 Consumer 处理
-- 都可以理解为备用方案
 
 服务雪崩：
 
@@ -871,7 +864,6 @@ Hystrix 仪表盘：
         // 降级的方法
         fallbackMethod = "meltdownFallback"
 }
-
 ```
 
 **当触发了熔断之后，请求不会走到正常的方法，而是会到降级的方法中：**
@@ -1000,6 +992,52 @@ Dashboard 图形信息的含义：
 参考资料：[hystrixDashboard(服务监控)](https://www.cnblogs.com/yufeng218/p/11489175.html) 或者 [这篇](https://blog.csdn.net/VisionLau/article/details/110803184)
 
 # 微服务网关
+
+> 可以先阅读上文中的 [微服务网关部分](#gateway)
+
+## Spring Cloud Gateway 基础
+
+Spring Cloud Gateway aims to provide a simple, yet effective way to route to APIs and provide cross cutting concerns to them such as: security, monitoring/metrics, and resiliency.
+
+---
+
+**Glossary（概念）**
+
+Route: 
+
+- The basic building block of the gateway. 
+
+- It is defined by an ID, a destination URI, a collection of predicates, and a collection of filters. 
+
+- A route is matched if the aggregate predicate is true.
+
+Predicate: 
+
+- This is a [Java 8 Function Predicate](https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html). The input type is a [Spring Framework `ServerWebExchange`](https://docs.spring.io/spring/docs/5.0.x/javadoc-api/org/springframework/web/server/ServerWebExchange.html). 
+
+- This lets you match on anything from the HTTP request, such as headers or parameters.
+
+Filter: 
+
+- These are instances of [`GatewayFilter`](https://github.com/spring-cloud/spring-cloud-gateway/tree/main/spring-cloud-gateway-server/src/main/java/org/springframework/cloud/gateway/filter/GatewayFilter.java) that have been constructed with a specific factory. 
+
+- Here, you can modify requests and responses before or after sending the downstream request.
+
+---
+
+**How It Works**
+
+The following diagram provides a high-level overview of how Spring Cloud Gateway works:
+
+![Spring Cloud Gateway Diagram](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/images/spring_cloud_gateway_diagram.png)
+
+Clients make requests to Spring Cloud Gateway. 
+
+If the Gateway Handler Mapping determines that a request matches a route, it is sent to the Gateway Web Handler. This handler runs the request through a filter chain that is specific to the request. 
+
+The reason the filters are divided by the dotted line is that filters can run logic both before and after the proxy request is sent. 
+
+All “pre” filter logic is executed. Then the proxy request is made. After the proxy request is made, the “post” filter logic is run.
 
 ## Zuul 基础
 
