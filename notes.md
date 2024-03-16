@@ -53,7 +53,7 @@
 >
 > **资源耗尽**：当一个服务因为故障或过载而响应变慢或停止响应时，依赖它的上游服务可能会积累大量等待响应的请求，这可能会导致线程池、连接池等资源耗尽，进而影响这些服务的正常功能。
 > **雪崩效应**：在微服务架构中，如果一个底层服务出现问题，依赖于该服务的所有上游服务都可能受到影响，导致错误或延迟的放大，形成雪崩效应。
- 
+
 > 为了避免级联问题，通常需要采用一系列的策略：
 > 
 > **服务隔离**：通过限流、熔断、线程池隔离等技术手段，确保一个服务的问题不会影响到其他服务。例如，熔断器可以在检测到下游服务延迟过高时快速失败，避免请求堆积。
@@ -780,6 +780,16 @@ Nginx（反向代理服务器）和 Ribbon 的对比：
 * <u>Nginx 是集中式的负载均衡器</u>，它会将所有请求都集中起来，然后再进行负载均衡
   * 在 Nginx 中，请求是先进入独立的负载均衡器，再负载均衡调度多个系统
 * Ribbon 是先在（消费者）客户端进行负载均衡，再发送请求到各个（服务提供者）系统
+
+## Ribbon 的负载均衡原理
+
+消费者服务发起请求，交由 `RibbonLoadBalancerClient` 处理请求，`RibbonLoadBalancerClient` 会提取请求 URL 中的生产者服务的 ID（服务名），然后将生产者服务的 ID 发送到 `DynamicServerListLoadBalancer` 中。
+
+`DynamicServerListLoadBalancer` 会将生产者服务 ID 发送给 <u>注册与发现服务</u>（如 Eureka），从那里获取生产者服务的 IP 列表。
+
+`DynamicServerListLoadBalancer` 在获取了生产者的 IP 列表后，会发送给 `IRule` ，`IRule` 根据设置好的负载均衡规则，选择某一个具体的生产者服务的地址返回给  `RibbonLoadBalancerClient` ，让它修改请求为具体的 URL 地址后，真正地向生产者发起请求。
+
+这个过程中， `RibbonLoadBalancerClient` 、`DynamicServerListLoadBalancer` 和 `IRule` 都是在 `LoadBalancerInterceptor` （负载均衡拦截器）中运行的。
 
 ## Ribbon 的几种负载均衡算法及项目中的配置
 
