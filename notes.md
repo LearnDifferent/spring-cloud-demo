@@ -823,6 +823,22 @@ public IRule rule() {
 
 在 Ribbon 中还可以自定义负载均衡算法，需要实现 IRule 接口，然后修改配置文件或者，自定义 Java Config 类（Java Config 类要单独一个目录和类），然后把 `@RibbonClient(name = "自定义名称", configuration = 该自定义算法所在的类.class)` 注解放在启动类上，可以 [参考这里](https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-ribbon.html)。
 
+## Ribbon 懒加载和饥饿加载
+
+Ribbon 默认采用懒加载，只有第一次被调用的时候才去初始化 `LoadBalancer` ，所以第一次请求耗时较长。
+
+可以通过配置文件，实现饥饿加载，也就是项目启动时就创建 `LoadBalance` ：
+
+```yml
+ribbon:
+  eager-load:
+    enabled: true #开启饥饿加载
+    clients: # 配置需要采用饥饿加载的服务。如果只有一个服务，直接写就好了，如果是多个，就用列表形式
+	    - service1
+	    - service2
+	    - service3...
+```
+
 # 熔断和降级 Hystrix
 
 ## 熔断和降级 / Hystrix - 相关基础
