@@ -40,6 +40,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud Alibaba -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.2.5.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!--Spring Cloud 的依赖-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
