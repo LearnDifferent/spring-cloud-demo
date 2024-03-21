@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>springcloud-api</module>
+        <module>springcloud-alibaba-nacos-6001</module>
         <module>springcloud-provider-dept-8001</module>
         <module>springcloud-eureka-7001</module>
         <module>springcloud-eureka-7002</module>
