@@ -614,6 +614,64 @@ Eureka 相关代码：
 * [Service Discovery: Eureka Clients](https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html) 
 * [Eureka集群部署以及踩坑记录](https://my.oschina.net/icebergxty/blog/3080748)
 
+# Nacos 服务注册与发现
+
+## Nacos 启动
+
+需要准备好 Java 环境和 Maven 工具，具体可以参考 [官网](https://nacos.io/) 的文档。
+
+在 [Nacos 的 GitHub Release](https://github.com/alibaba/nacos/releases) 页面选择需要的版本下载解压。这里以 [参考教程视频](https://www.bilibili.com/video/BV1LQ4y127n4/?p=17) 的 Nacos 1.4.1 版为例，解压后去到 `bin` 路径下，使用以下命令指定 `-m standalone`  单机模式启动即可。
+
+```bash
+# Unix
+sh startup.sh -m standalone
+
+# Ubuntu 如果报错就使用这个
+bash startup.sh -m standalone
+
+# Windows
+startup.cmd -m standalone
+```
+
+如果需要关闭，则在 `bin` 路径下使用如下命令：
+
+```bash
+# Unix
+sh shutdown.sh
+
+# Windows（Windows 也可以在 GUI 双击 shutdown.cmd 运行文件）
+shutdown.cmd
+```
+---
+
+启动 Nacos 后，默认的控制台地址是 [localhost:8848/nacos/index.html](http://localhost:8848/nacos/index.html) ，默认的账号密码都是 `nacos` 。
+
+## 向 Nacos 注册服务
+
+首先，引入 Spring Cloud Alibaba 的依赖：
+
+这里是在父工程的 [pom.xml](./pom.xml) 中添加 Spring Cloud Alibaba 的依赖：
+```xml
+<dependency>  
+    <groupId>com.alibaba.cloud</groupId>  
+    <artifactId>spring-cloud-alibaba-dependencies</artifactId>  
+    <version>2.2.5.RELEASE</version>  
+    <type>pom</type>  
+    <scope>import</scope>  
+</dependency>
+```
+
+然后子工程 [springcloud-alibaba-nacos-6001](./springcloud-alibaba-nacos-6001) 的 [pom.xml](./springcloud-alibaba-nacos-6001/pom.xml) 中添加 Nacos Discovery 依赖：
+
+```xml
+<!-- Spring Cloud Alibaba Nacos Discovery -->  
+<dependency>  
+    <groupId>com.alibaba.cloud</groupId>  
+    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>  
+</dependency>
+```
+关于 Nacos Discovery 可以参考 [官方 GitHub 的 Wiki](https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-discovery) 或 [V1 版本的文档](https://nacos.io/docs/v1/quick-start-spring-cloud/#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0)
+
 # Open Feign：HTTP Client
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
