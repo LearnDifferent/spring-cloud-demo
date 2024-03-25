@@ -446,6 +446,8 @@ VALUES
 
 IDEA 判断一个项目为微服务时，会有一个【Services】选项。我们可以在该选项中快速管理微服务项目。
 
+![](./idea_services_multi_instances.png)
+
 如果一个服务希望有多个实例，可以在【Services】选项中，找到希望开启多个实例的服务名，然后【右键】->【Copy Configuration...】打开【Edit Configuration】选项（也可以使用 ctrl + D / Command + D 打开）。
 
 在 【Edit Configuration】选项中，【Name】的输入框可以修改新实例的名称。

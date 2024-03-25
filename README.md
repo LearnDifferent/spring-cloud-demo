@@ -4,7 +4,7 @@ Notes and Demo Code for Spring Cloud Microservices with Nacos, Eureka, Open Feig
 
 ## Notes
 
-Checkout [notes.md](./notes.md)
+Checkout [notes.md](./notes/notes.md)
 
 ## License
 
