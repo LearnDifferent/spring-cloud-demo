@@ -379,7 +379,7 @@ HTTP 和 RPC 的主要区别：
 
 * 创建方式：首先创建 Maven 总工程，然后再创建多个 Module 来演示微服务
 * 比如关于 api 的 Module 就只负责 1 个功能
-* 项目命名类似 [springcloud-provider-dept-8001](./springcloud-provider-dept-8001) ，代表是 dept 的 provider，端口号为 8001
+* 项目命名类似 [springcloud-provider-dept-8001](../springcloud-provider-dept-8001) ，代表是 dept 的 provider，端口号为 8001
 * 每一个 Module 中的 Spring Boot 项目都需要创建一个 controller，来让其他的服务访问
 
 Spring Cloud 架构的使用步骤：
@@ -438,15 +438,15 @@ VALUES
         (7,'后勤部',DATABASE());
 ```
 
-完成后，Java 实体类可以参考：[springcloud-api](./springcloud-api) 的 [Dept.java](./springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java)
+完成后，Java 实体类可以参考：[springcloud-api](../springcloud-api) 的 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java)
 
-> 注意：因为 [Dept.java](./springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](./springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](./springcloud-api) 的依赖。参考：[springcloud-consumer-dept-80 中的 pom.xml](./springcloud-consumer-dept-80/pom.xml)
+> 注意：因为 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](../springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](../springcloud-api) 的依赖。参考：[springcloud-consumer-dept-80 中的 pom.xml](../springcloud-consumer-dept-80/pom.xml)
 
 ## IDEA 配置多实例技巧
 
 IDEA 判断一个项目为微服务时，会有一个【Services】选项。我们可以在该选项中快速管理微服务项目。
 
-![](./idea_services_multi_instances.png)
+![](../idea_services_multi_instances.png)
 
 如果一个服务希望有多个实例，可以在【Services】选项中，找到希望开启多个实例的服务名，然后【右键】->【Copy Configuration...】打开【Edit Configuration】选项（也可以使用 ctrl + D / Command + D 打开）。
 
@@ -465,17 +465,17 @@ IDEA 判断一个项目为微服务时，会有一个【Services】选项。我�
 
 项目中的 Consumer：
 
-- [springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
-- [springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
-- [springcloud-consumer-hystrix-dashboard-9001](./springcloud-consumer-hystrix-dashboard-9001)
+- [springcloud-consumer-dept-80](../springcloud-consumer-dept-80)
+- [springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
+- [springcloud-consumer-hystrix-dashboard-9001](../springcloud-consumer-hystrix-dashboard-9001)
 
 项目中的 Provider：
 
-- [springcloud-provider-dept-8001](./springcloud-provider-dept-8001)
-- [springcloud-provider-dept-8002](./springcloud-provider-dept-8002)
-- [springcloud-provider-dept-8003](./springcloud-provider-dept-8003)
-- [springcloud-provider-dept-hystrix-8001](./springcloud-provider-dept-hystrix-8001)
-- [springcloud-provider-dept-hystrix-8002](./springcloud-provider-dept-hystrix-8002)
+- [springcloud-provider-dept-8001](../springcloud-provider-dept-8001)
+- [springcloud-provider-dept-8002](../springcloud-provider-dept-8002)
+- [springcloud-provider-dept-8003](../springcloud-provider-dept-8003)
+- [springcloud-provider-dept-hystrix-8001](../springcloud-provider-dept-hystrix-8001)
+- [springcloud-provider-dept-hystrix-8002](../springcloud-provider-dept-hystrix-8002)
 
 ## Provider 和 Consumer 与 Eureka
 
@@ -622,9 +622,9 @@ Eureka 的自我保护机制（Self Preservation）：
 
 Eureka 相关代码：
 
-- [springcloud-eureka-7001](./springcloud-eureka-7001)
-- [springcloud-eureka-7002](./springcloud-eureka-7002)
-- [springcloud-eureka-7003](./springcloud-eureka-7003)
+- [springcloud-eureka-7001](../springcloud-eureka-7001)
+- [springcloud-eureka-7002](../springcloud-eureka-7002)
+- [springcloud-eureka-7003](../springcloud-eureka-7003)
 
 拓展阅读：
 
@@ -667,7 +667,7 @@ shutdown.cmd
 
 首先，引入 Spring Cloud Alibaba 的依赖：
 
-这里是在父工程的 [pom.xml](./pom.xml) 中添加 Spring Cloud Alibaba 的依赖：
+这里是在父工程的 [pom.xml](../pom.xml) 中添加 Spring Cloud Alibaba 的依赖：
 ```xml
 <dependency>  
     <groupId>com.alibaba.cloud</groupId>  
@@ -678,7 +678,7 @@ shutdown.cmd
 </dependency>
 ```
 
-然后子工程 [springcloud-alibaba-nacos-6001](./springcloud-alibaba-nacos-6001) 的 [pom.xml](./springcloud-alibaba-nacos-6001/pom.xml) 中添加 Nacos Discovery 依赖：
+然后子工程 [springcloud-alibaba-nacos-6001](../springcloud-alibaba-nacos-6001) 的 [pom.xml](../springcloud-alibaba-nacos-6001/pom.xml) 中添加 Nacos Discovery 依赖：
 
 ```xml
 <!-- Spring Cloud Alibaba Nacos Discovery -->  
@@ -726,7 +726,7 @@ spring:
 
 在学习 [Open Feign](#open-feign) 之前需要了解 RestTemplate。
 
-> 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](./springcloud-consumer-dept-80)
+> 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](../springcloud-consumer-dept-80)
 > 
 > 我在 [LearnDifferent/github-stars](https://github.com/LearnDifferent/github-stars) 中，也使用过 RestTemplate，可以查看 [RestTemplate 的配置类](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/config/RestTemplateConfig.java) 和 [RestTemplate 在 Service 中的使用](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/service/impl/RepoServiceImpl.java)
 
@@ -738,11 +738,11 @@ RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 
 <span id="use-ribbon">需要先在配置类中添加 RestTemplate 的 Bean，并加上 `@LoadBalanced` 负载均衡的注解，来实现（Ribbon）负载均衡的服务调用</span>，参考：
 
-- [ConfigBean.java](./springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) 的 `public RestTemplate getRestTemplate()`
+- [ConfigBean.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) 的 `public RestTemplate getRestTemplate()`
 
 在 Consumer 中使用的时候，可以参考：
 
-- [ConsumerController.java](./springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
+- [ConsumerController.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
 
 再比如，这个时候「消费者 B」需要调用「提供者 A」所提供的服务时，需要这么写：
 
@@ -802,7 +802,7 @@ public class TestController {
 
 ## Open Feign 优化配置
 
-Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](./springcloud-consumer-dept-openfeign/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
+Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](../springcloud-consumer-dept-openfeign/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
 
 ```yaml
 feign:
@@ -818,10 +818,10 @@ feign:
 
 Open Feign 相关代码：
 
-- 总体模块：[springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
-- Open Feign Client 接口的写法：[DeptClient.java](./springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/service/DeptClient.java)
-- 在 Controller 中使用 Open Feign： [ConsumerController.java](./springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
-- 主启动类：[ConsumerDeptFeign80.java](./springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
+- 总体模块：[springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
+- Open Feign Client 接口的写法：[DeptClient.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/service/DeptClient.java)
+- 在 Controller 中使用 Open Feign： [ConsumerController.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
+- 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
 
 # Ribbon：负载均衡
 
@@ -909,12 +909,19 @@ Ribbon 中有多种负载均衡调度算法，其默认是使用的 RoundRobinRu
 1. 配置文件：
 
 ```yml
+# 这里应该填服务名，比如：user-service、user-service 等
 providerName:
   ribbon:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 ```
 
-2. `@Configuration` 配置类（可以查看 [springcloud-consumer-dept-80](./springcloud-consumer-dept-80) 模块的 [ConfigBean.java](./springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) ）：
+注意：
+
+- 上面的 yaml 里面的 `providerName` 应该替换为具体的服务名。
+- 除了 Netflix 的负载均衡规则，还可以设置 Spring Cloud Alibaba 的：`com.alibaba.cloud.nacos.ribbon.NacosRule`
+- 可以参考 [springcloud-alibaba-nacos-consumer-6200 的配置文件](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
+
+2. `@Configuration` 配置类（可以查看 [springcloud-consumer-dept-80](../springcloud-consumer-dept-80) 模块的 [ConfigBean.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) ）：
 
 ```java
 // 默认是轮询，可以通过加入 Spring 容器来改变算法策略
@@ -1066,9 +1073,9 @@ Hystrix 仪表盘：
 
 ## Hystrix 的降级方案
 
-> 下面的代码可以查看 [springcloud-provider-dept-hystrix-8003](./springcloud-provider-dept-hystrix-8003) 。
+> 下面的代码可以查看 [springcloud-provider-dept-hystrix-8003](../springcloud-provider-dept-hystrix-8003) 。
 > 
-> OpenFeign 的降级方法可以查看 [springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign) 。一般如果在 OpenFeign 的服务中，还有一套单独的 Hystrix，那 OpenFeign 和 Hystrix 都需要配置降级方案。
+> OpenFeign 的降级方法可以查看 [springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign) 。一般如果在 OpenFeign 的服务中，还有一套单独的 Hystrix，那 OpenFeign 和 Hystrix 都需要配置降级方案。
 
 **1. 熔断触发降级**
 
@@ -1127,12 +1134,12 @@ Hystrix 仪表盘：
 项目中的相关代码：
 
 - Provider 端：
-  - [springcloud-provider-dept-hystrix-8001](./springcloud-provider-dept-hystrix-8001)
-  - [springcloud-provider-dept-hystrix-8002](./springcloud-provider-dept-hystrix-8002)
-  - [springcloud-provider-dept-hystrix-8003](./springcloud-provider-dept-hystrix-8003)
+  - [springcloud-provider-dept-hystrix-8001](../springcloud-provider-dept-hystrix-8001)
+  - [springcloud-provider-dept-hystrix-8002](../springcloud-provider-dept-hystrix-8002)
+  - [springcloud-provider-dept-hystrix-8003](../springcloud-provider-dept-hystrix-8003)
 - Consumer 端：
-  - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](./springcloud-consumer-dept-openfeign)
-  - Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](./springcloud-consumer-hystrix-dashboard-9001)
+  - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
+  - Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](../springcloud-consumer-hystrix-dashboard-9001)
 
 参考资料：[Spring BootでCircuit Breaker(Spring Cloud Netflix Hystrix)を試す](http://pppurple.hatenablog.com/entry/2017/01/11/235814)
 
@@ -1284,7 +1291,7 @@ Eureka Server 是 Provider（服务提供者）的统一入口。
 
 Zuul 中最关键的是 **Router（路由）** 和 **Filter（过滤器）**
 
-> 关于 Zuul 的配置，可以参考 [springcloud-gateway-zuul-9900](./springcloud-gateway-zuul-9900) 的 [配置文件](./springcloud-gateway-zuul-9900/src/main/resources/application.yml) 
+> 关于 Zuul 的配置，可以参考 [springcloud-gateway-zuul-9900](../springcloud-gateway-zuul-9900) 的 [配置文件](../springcloud-gateway-zuul-9900/src/main/resources/application.yml) 
 
 ## Zuul 的路由功能 / Router
 
@@ -1296,7 +1303,7 @@ Zuul 中最关键的是 **Router（路由）** 和 **Filter（过滤器）**
 
 Zuul 获取所有 Consumer 的 Meta Data（名称、IP 和端口等）之后，就能做 **路由映射** 了。
 
-起動するクラスファイルに `@EnableZuulProxy` アノテーションをつけます（参考：[Zuul9900.java](./springcloud-gateway-zuul-9900/src/main/java/com/example/springcloud/Zuul9900.java)）
+起動するクラスファイルに `@EnableZuulProxy` アノテーションをつけます（参考：[Zuul9900.java](../springcloud-gateway-zuul-9900/src/main/java/com/example/springcloud/Zuul9900.java)）
 
 最后加入配置即可，如：
 
@@ -1561,12 +1568,12 @@ Spring Cloud Config 运作流程（Config 的客户端简称为 Client，Config 
 
 Spring Cloud Config 相关 GitHub 仓库和代码：
 
-- Server（服务端）：[springcloud-config-server-3001](./springcloud-config-server-3001)
-- Client（客户端，用于基础演示）：[springcloud-config-client-4001](./springcloud-config-client-4001)
+- Server（服务端）：[springcloud-config-server-3001](../springcloud-config-server-3001)
+- Client（客户端，用于基础演示）：[springcloud-config-client-4001](../springcloud-config-client-4001)
 - Client（客户端，用于在项目中使用）：
-  - [springcloud-eureka-7001](./springcloud-eureka-7001) 的 [bootstrap.yml](./springcloud-eureka-7001/src/main/resources/bootstrap.yml)
-  - [springcloud-provider-dept-8001](./springcloud-provider-dept-8001)  的 [bootstrap.yml](./springcloud-provider-dept-8001/src/main/resources/bootstrap.yml) 
-- 在 Server [配置](./springcloud-config-server-3001/src/main/resources/application.yml) 了 [GitHub 配置仓库的链接](https://github.com/LearnDifferent/springcloud-config-demo/blob/master/application.yml) 后，可以通过以下链接访问该仓库的配置
+  - [springcloud-eureka-7001](../springcloud-eureka-7001) 的 [bootstrap.yml](../springcloud-eureka-7001/src/main/resources/bootstrap.yml)
+  - [springcloud-provider-dept-8001](../springcloud-provider-dept-8001)  的 [bootstrap.yml](../springcloud-provider-dept-8001/src/main/resources/bootstrap.yml) 
+- 在 Server [配置](../springcloud-config-server-3001/src/main/resources/application.yml) 了 [GitHub 配置仓库的链接](https://github.com/LearnDifferent/springcloud-config-demo/blob/master/application.yml) 后，可以通过以下链接访问该仓库的配置
   - http://localhost:3001/application-dev.yml
     - http://localhost:3001/application-test.yml
     - http://localhost:3001/application-prod.yml
