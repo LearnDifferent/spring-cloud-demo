@@ -673,6 +673,33 @@ shutdown.cmd
 ```
 关于 Nacos Discovery 可以参考 [官方 GitHub 的 Wiki](https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-discovery) 或 [V1 版本的文档](https://nacos.io/docs/v1/quick-start-spring-cloud/#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0)
 
+## Nacos 服务分级存储模型
+
+**Nacos 的一个服务（比如 user-service）可以部署在多个集群上，而每个集群都有多个实例组成。**
+
+Nacos 引入以机房所在位置划分的集群，比如杭州集群、上海集群等。
+
+```
+         【服务】
+   /        \         \
+【上海集群】 【杭州集群】 【河北集群】
+/          \
+【上海实例1】【上海实例2】.........
+```
+
+以机房位置划分集群，主要是因为 *跨集群调用延迟相对较高* ，所以 **服务调用应尽可能选择本地集群服务** ，当本地集群不可访问时，再去访问其他集群。
+
+在 Nacos 中的配置文件中如下所示：
+
+```ym
+spring:  
+  cloud:  
+    nacos:  
+      discovery:  
+        # 服务注册的集群名称，尽量使用机房所在位置为名，这里的 SZ 表示机房在深圳，是深圳集群  
+        cluster-name: SZ
+```
+
 # Open Feign：HTTP Client
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
