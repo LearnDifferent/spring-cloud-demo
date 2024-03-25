@@ -1,0 +1,14 @@
+server:
+  port: 6200
+spring:
+  application:
+    name: nacos-consumer
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        cluster-name: SZ
+# Set the load balance rule of nacos-provider service
+nacos-provider:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
