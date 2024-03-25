@@ -371,8 +371,9 @@ HTTP 和 RPC 的主要区别：
 2. Spring Cloud Gateway 是 NIO 的网关，它的底层基于 Spring Webflux（基于 Reactor 的响应模式）
 
 
-
 # Spring Cloud 项目基本说明
+
+## 项目基本说明
 
 总体说明：
 
@@ -385,7 +386,7 @@ Spring Cloud 架构的使用步骤：
 
 1. 导入依赖
 2. 编写配置文件
-3. 使用 @EnableXxxx 注解开启功能
+3. 使用 `@EnableXxxx` 注解开启功能
 4. 配置类
 
 ---
@@ -441,6 +442,19 @@ VALUES
 
 > 注意：因为 [Dept.java](./springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](./springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](./springcloud-api) 的依赖。参考：[springcloud-consumer-dept-80 中的 pom.xml](./springcloud-consumer-dept-80/pom.xml)
 
+## IDEA 配置多实例技巧
+
+IDEA 判断一个项目为微服务时，会有一个【Services】选项。我们可以在该选项中快速管理微服务项目。
+
+如果一个服务希望有多个实例，可以在【Services】选项中，找到希望开启多个实例的服务名，然后【右键】->【Copy Configuration...】打开【Edit Configuration】选项（也可以使用 ctrl + D / Command + D 打开）。
+
+在 【Edit Configuration】选项中，【Name】的输入框可以修改新实例的名称。
+
+在【Edit Configuration】选项中，最关键的是修改端口。展开【Environment】，在【VM options】的输入框中，输入 `-Dserver.port=端口号` 来映射新的端口号。
+
+设置完毕后，点击最下方的【OK】就可以了。
+
+此时去【Not Started】里面就能找到新创建好的实例。
 # 微服务中的 Provider 和 Consumer
 
 ## Provider 和 Consumer 的基本介绍及项目中的使用
@@ -686,6 +700,8 @@ Nacos 引入以机房所在位置划分的集群，比如杭州集群、上海�
 /          \
 【上海实例1】【上海实例2】.........
 ```
+
+![Nacos数据模型](https://cdn.nlark.com/yuque/0/2020/png/1465210/1598000046784-95a372c9-cbcf-452f-a116-fb95de056bf2.png#height=391&id=lI5lP&originHeight=391&originWidth=468&originalType=binary&ratio=1&rotation=0&showTitle=false&size=50930&status=done&style=none&title=&width=468)
 
 以机房位置划分集群，主要是因为 *跨集群调用延迟相对较高* ，所以 **服务调用应尽可能选择本地集群服务** ，当本地集群不可访问时，再去访问其他集群。
 
