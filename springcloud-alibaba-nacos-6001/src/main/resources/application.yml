@@ -6,3 +6,6 @@ spring:
   cloud:
     nacos:
       server-addr: localhost:8848
+      discovery:
+        # 服务注册的集群名称，尽量使用机房所在位置为名，这里的 SZ 表示机房在深圳，是深圳集群
+        cluster-name: SZ
