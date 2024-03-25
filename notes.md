@@ -395,6 +395,7 @@ Spring Cloud 架构的使用步骤：
 * SpringCloud：Hoxton.SR8
 * SpringBoot：2.3.3.RELEASE
 * 以下版本全为：2.2.5.RELEASE
+  * Spring Cloud Alibaba：spring-cloud-alibaba-dependencies
   * Eureka Server：spring-cloud-starter-netflix-eureka-server
   * Provider：spring-cloud-starter-netflix-eureka-client
   * Consumer 和 Ribbon：
@@ -620,7 +621,7 @@ Eureka 相关代码：
 
 需要准备好 Java 环境和 Maven 工具，具体可以参考 [官网](https://nacos.io/) 的文档。
 
-在 [Nacos 的 GitHub Release](https://github.com/alibaba/nacos/releases) 页面选择需要的版本下载解压。这里以 [参考教程视频](https://www.bilibili.com/video/BV1LQ4y127n4/?p=17) 的 Nacos 1.4.1 版为例，解压后去到 `bin` 路径下，使用以下命令指定 `-m standalone`  单机模式启动即可。
+在 [Nacos 的 GitHub Release](https://github.com/alibaba/nacos/releases) 页面选择需要的版本下载解压。这里以 [参考教程视频](https://www.bilibili.com/video/BV1LQ4y127n4/?p=17) 的 Nacos 1.4.1 版（[zip 下载](https://github.com/alibaba/nacos/releases/download/1.4.1/nacos-server-1.4.1.zip) / [tar.gz 下载](https://github.com/alibaba/nacos/releases/download/1.4.1/nacos-server-1.4.1.tar.gz)）为例，解压后去到 `bin` 路径下，使用以下命令指定 `-m standalone`  单机模式启动即可。
 
 ```bash
 # Unix
