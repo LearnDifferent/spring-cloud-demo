@@ -10,6 +10,7 @@
     <modules>
         <module>springcloud-api</module>
         <module>springcloud-alibaba-nacos-6001</module>
+        <module>springcloud-alibaba-nacos-provider-6100</module>
         <module>springcloud-provider-dept-8001</module>
         <module>springcloud-eureka-7001</module>
         <module>springcloud-eureka-7002</module>

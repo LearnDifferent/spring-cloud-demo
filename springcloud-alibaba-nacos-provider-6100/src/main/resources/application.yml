@@ -1,0 +1,14 @@
+server:
+  port: 6100
+spring:
+  application:
+    name: nacos-provider
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        # 如果想测试 NacosRule 负载均衡，可以先根据 cluster-name 为 SZ 的配置启动多个实例
+        # IDEA 的【Services】->【Copy Configuration】->【VM Options】->【-Dserver.port=端口号】可以启动多个实例
+        # 然后，再将这个 cluster-name 改为其他的后，再启动多个实例
+        # 这样的话，根据 NacosRule 负载均衡，会优先请求同一个 cluster-name 下的请求
+        cluster-name: SZ
