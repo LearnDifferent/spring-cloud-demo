@@ -734,17 +734,35 @@ nacos-provider:
 
 当配置了 `NacosRule` 之后，负载均衡的规则是优先请求同一个 Cluster Name（服务集群）下的 services（服务），而在同一个 Cluster 下的 services 则是采取 *随机策略* 。
 
+> 因为 `NacosRule` 是集群优先的策略，如果要调整，可以在 Nacos 的控制台手动编辑权重（0 到 1 之间的权重）
+
 在本项目中，消费者 [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) 的负载均衡规则是 `NacosRule` ，设置的 Cluster Name 是 SZ。而生产者 [springcloud-alibaba-nacos-provider-6100](../springcloud-alibaba-nacos-provider-6100) 的 Cluster Name 也是 SZ。
 
 ---
 
-测试 `NacosRule` 的方法：
+测试 `NacosRule` 负载均衡的方法：
 
 1. 先按照默认的 `spring.cloud.nacos.discovery.cluster-name` 为 SZ 的配置启动多个生产者 springcloud-alibaba-nacos-provider-6100 实例
 2. 再将生产者 [springcloud-alibaba-nacos-provider-6100 的 application.yml](../springcloud-alibaba-nacos-provider-6100/src/main/resources/application.yml) 中的 `spring.cloud.nacos.discovery.cluster-name`  改为其他的（比如 SH）后，再继续启动多个生产者实例
 3. 启动消费者 springcloud-alibaba-nacos-consumer-6200 后，向消费者发送 `/consumer/api`  请求。此时，消费者会通过 Open Feign 调用生产者的服务。
 4. 此时会观察到，消费者会随机调用同一个 Cluster Name 为 SZ 的生产者，而其他 Cluster Name 的生产者则不会被调用
 5. 我们可以在 Nacos 控制台，手动将 Cluster 为 SZ 的生产者服务下线。此时再让消费者去请求，则其他的 Cluster Name 的生产者也会被调用。
+
+## Nacos Namespace 命名空间 - 环境隔离
+
+Nacos 使用 Namespace（命名空间）来做环境隔离。
+
+在 Nacos 控制台右侧菜单列表中，有【命名空间】的选项，点开后可以看到默认的命名空间是 public。
+
+点击【新建命名空间】可以创建新的命名空间，以下是三个输入框：
+
+- 命名空间ID(不填则自动生成)：这里可以填写自定义的 Namespace ID，如果不填，就由系统自动生成 UUID。这个 Namespace ID 后续要在服务的配置文件中填写
+- 命名空间名：这个就是 Namespace 的名称，可以随便填
+- 描述：同上
+
+Nacos 命名空间最重要的就是 Namespace ID，这个 ID 需要在服务的配置文件中填写到 `spring.cloud.nacos.discovery.namespace` 配置中。
+
+当一个服务配置了 Namespace 后，只有相同 Namespace 的服务可以互相访问，其他 Namespace 的服务就不能访问该 Namespace 下的所有服务。
 
 # Open Feign：HTTP Client
 
