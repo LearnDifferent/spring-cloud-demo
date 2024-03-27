@@ -840,6 +840,55 @@ Nacos 与 Eureka 的区别：
 	- Nacos 集群默认采用 AP 模式，当集群中存在非临时实例时，采用 CP 模式
 	- Eureka 只有 AP 模式
 
+# Nacos 配置管理
+
+>配置管理也可以参考 [[#Spring Cloud Config]]
+
+## Nacos 配置管理入门
+
+Maven 依赖：
+
+```xml
+<dependency>  
+    <groupId>com.alibaba.cloud</groupId>  
+    <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>  
+</dependency>
+```
+
+在 Nacos 控制台右侧，有【配置管理】菜单按钮，在该菜单中有【配置列表】，进入【配置列表】页面后，点击 + 号就可以【新建配置】，有以下输入框和选项：
+
+- Data ID：配置文件的 ID。我们可以使用“服务名-环境.yaml”的形式命名，比如：userservice-dev.yaml、orderservice-uat.yaml 等
+- Group：分组名称。一般采用默认即可。
+- 描述：自己填写
+- 配置格式：选择配置文件的格式
+
+在填写完毕后，点击【发布】按钮就创建成功了。
+
+---
+
+一般我们只要把那些需要经常变更的配置放到 Nacos 上进行管理就行了。Spring Boot 配置文件中， `bootstrap.yml` 的优先级大于 `application.yml` ，所以 Nacos 地址和服务名称等信息应该配置在 `bootstrap.yml` 上，这样是为了在项目启动的时候，就将配置在 Nacos 中的配置，读取到本地，然后跟本地的 `application.yml` 进行合并。
+
+如果使用 Nacos Config，那么在 `bootstrap.yml` 中需要配置：
+
+```yml
+spring:  
+  application:  
+    # 服务名  
+    name: nacos-config-demo  
+  profiles:  
+    # 开发环境（如果有设置了 Nacos 的 Namespace，也要记得在配置文件中声明）  
+    active: dev  
+  cloud:  
+    nacos:  
+      # Nacos 地址  
+      server-addr: localhost:8848  
+      config:  
+        # 配置文件后缀  
+        file-extension: yaml
+```
+
+可以参考 [springcloud-alibaba-nacos-config-6300 的 bootstrap.yml](../springcloud-alibaba-nacos-config-6300/src/main/resources/bootstrap.yml)
+
 # Open Feign：HTTP Client
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
@@ -1656,6 +1705,8 @@ public class RouteFilter extends ZuulFilter {
 
 # Spring Cloud Config：配置管理
 
+>配置管理，也可参考上文的 [[#Nacos 配置管理]]
+
 ## Spring Cloud Config
 
 为什么要使用进行配置管理？
@@ -1669,6 +1720,7 @@ public class RouteFilter extends ZuulFilter {
 
 * 既能对配置文件统一地进行管理，又能在项目运行时动态修改配置文件：
   * Spring Cloud Config
+  * Nacos
   * disconf
   * Apollo
 
