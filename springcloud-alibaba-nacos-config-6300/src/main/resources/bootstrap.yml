@@ -1,0 +1,16 @@
+# Nacos 配置管理需要配置这些
+spring:
+  application:
+    # 服务名
+    name: nacos-config-demo
+  profiles:
+    # 开发环境（如果有设置了 Nacos 的 Namespace，也要记得在配置文件中声明）
+    active: dev
+  cloud:
+    nacos:
+      # Nacos 地址
+      server-addr: localhost:8848
+      config:
+        # 配置文件后缀
+        file-extension: yaml
+
