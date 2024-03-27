@@ -563,6 +563,16 @@ Eureka 是一个服务发现（Service registry）框架。
 * Eureka Client 和 Eureka Server 可以使用 JSON / XML 格式进行通讯
 * 默认的情况下 Eureka Server 使用压缩 JSON 格式来获取注册列表的信息
 
+>Eureka使用的是拉（pull）模式来通知服务实例服务列表的变化。在Eureka中，客户端（即服务消费者）定期从Eureka Server拉取服务注册列表。这意味着服务消费者需要定时向Eureka Server发送请求，以获取最新的服务列表信息。
+>
+>这种拉取模式的好处在于简化了Eureka Server的设计和实现，因为它不需要跟踪所有客户端的连接状态来主动推送更新。相反，客户端负责定期更新它们自己的服务列表缓存。
+>
+>默认情况下，客户端每30秒拉取一次服务注册信息，但这个频率是可以通过配置调整的。例如，在客户端使用Spring Cloud Netflix Eureka时，可以通过`eureka.client.registryFetchIntervalSeconds`属性来配置这个频率。
+>
+>虽然这种拉取模式可能导致服务列表的更新存在一定的延迟，但在大多数情况下，这种延迟是可以接受的。此外，使用拉取模式可以减少Eureka Server的负载，提高系统的可扩展性和稳定性。
+>
+>本段来自 AI
+
 服务下线（Cancel）：
 
 1. Eureka Client 在服务下线的时候，会发送下线请求（Cancel）给 Eureka Server
@@ -575,6 +585,7 @@ Eureka 是一个服务发现（Service registry）框架。
 
 除了 Eureka，服务发现的组件还有：
 
+* Nacos
 * Zookeeper
 * Consul
 
@@ -630,6 +641,8 @@ Eureka 相关代码：
 
 * [Service Discovery: Eureka Clients](https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html) 
 * [Eureka集群部署以及踩坑记录](https://my.oschina.net/icebergxty/blog/3080748)
+
+Eureka 注册中心和 Nacos 注册中心的不同可以点击查看 [下面的章节（HTML 跳转）](#eureka_vs_nacos) / [[#<span id='eureka_vs_nacos'>Nacos 和 Eureka 的共同点与区别</span>|Obsidian 跳转]]
 
 # Nacos 服务注册与发现
 
@@ -763,6 +776,69 @@ Nacos 使用 Namespace（命名空间）来做环境隔离。
 Nacos 命名空间最重要的就是 Namespace ID，这个 ID 需要在服务的配置文件中填写到 `spring.cloud.nacos.discovery.namespace` 配置中。
 
 当一个服务配置了 Namespace 后，只有相同 Namespace 的服务可以互相访问，其他 Namespace 的服务就不能访问该 Namespace 下的所有服务。
+
+## Nacos 拉取推送模式 / 健康检查机制
+
+Nacos 注册中心与 **服务消费者** ：
+
+- **Consumers 定时去 Nacos pull 服务列表** ：默认是消费者每 30 秒去注册中心拉取服务
+- **如果服务列表发生变化，Nacos 会主动 push 变更消息给 Consumers** ：如果有服务下线或上线，那么注册中心会主动推送变更消息给消费者
+
+---
+
+【简述】Nacos 注册中心与 **服务生产者提供者** （服务提供者）：
+
+- 当一个 Provider 启动时，会主动向 Nacos 注册 Provider 的服务信息，注册时会根据配置分为 **临时实例** 和 **永久实例**  
+- **临时实例 Provider 需要主动发送心跳到 Nacos，而永久实例 Provider 则是等着 Nacos 主动探测**
+
+也就是说，Nacos 有两种健康检查机制：
+
+- **服务客户端主动上报（心跳模式）** ，告诉 Nacos 服务端自己健康状态，如果在一段时间没有上报，那么我们就认为服务已经不健康
+- **Nacos 服务端主动向服务客户端进行探测** ，检查服务客户端是否还被能探测到
+
+Nacos 采用两种健康检查机制的原因：
+
+- 如果所有服务都需要注册中心去主动探测，由于服务的数量远大于注册中心的数量，那么注册中心的任务量将会比较巨大。
+
+临时实例（非持久化实例）：
+
+- 临时实例只是临时存在于注册中心中， **会在服务下线或不可用时被注册中心剔除**
+- 临时实例会 **与注册中心保持心跳** ，注册中心会在一段时间没有收到来自客户端的心跳后会将实例设置为不健康，然后在一段时间后进行剔除
+-  默认就是临时实例 
+
+永久实例（持久化实例）：
+
+- 永久实例在被删除之前会永久的存在于注册中心，且有可能并不知道注册中心存在，不会主动向注册中心上报心跳
+- 这个时候就需要 **注册中心主动进行探活**
+- 需要注意，**永久实例就算被检查不健康，也不会被剔除**
+- 设置 **永久实例，需要在配置文件中将 `spring.cloud.nacos.discovery.ephemeral` 设置为 false**
+
+
+![](https://cdn.nlark.com/yuque/0/2020/png/1465210/1598000047612-f1ea83bb-67c4-4c92-83ef-1e29f9f3370c.png#from=url&height=352&id=p6ETm&originHeight=368&originWidth=564&originalType=binary&ratio=1&rotation=0&showTitle=true&status=done&style=none&title=Nacos%E4%B8%A4%E7%A7%8D%E5%AE%9E%E4%BE%8B%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E6%9C%BA%E5%88%B6&width=539)
+
+参考资料：[Nacos 健康检查机制](https://nacos.io/en/docs/ebook/qrkw0g/#%E4%B8%B4%E6%97%B6%E5%AE%9E%E4%BE%8B%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E6%9C%BA%E5%88%B6)
+
+## <span id='eureka_vs_nacos'>Nacos 和 Eureka 的共同点与区别</span>
+
+Nacos 与 Eureka 的共同点：
+
+- 支持服务注册和拉取
+- 支持服务生产者（提供者）使用心跳的方式做健康检测
+
+Nacos 与 Eureka 的区别：
+
+- 健康检查机制：
+	- Nacos 除了服务提供者主动发送心跳到服务端之外，还支持主动监测服务提供者的状态（临时实例主动发送心跳，永久实例是服务端主动探测服务提供者）
+	- 而 Eureka 通过心跳机制来维护服务实例的健康状态，服务实例需要定期向Eureka Server发送心跳来证明自己仍然是活跃的
+- 是否剔除不健康的实例：
+	- Nacos 临时实例如果心跳不正常会被剔除，永久实例不会被剔除
+	- 而 Eureka Server 会在检测到一个服务实例心跳停止后一段时间内将该服务实例从注册列表中剔除
+- pull / push 模式通知服务列表变化：
+	- Nacos 支持 pull 和 push 两种模式，客户端会定时主动 pull，Nacos 在服务列表变化时也会主动 push 给客户端
+	- Eureka 只有拉（pull）模式来通知服务实例服务列表的变化。即客户端（即服务消费者）定期从 Eureka Server 拉取服务注册列表
+- AP / CP 模式：
+	- Nacos 集群默认采用 AP 模式，当集群中存在非临时实例时，采用 CP 模式
+	- Eureka 只有 AP 模式
 
 # Open Feign：HTTP Client
 
