@@ -891,6 +891,32 @@ spring:
 
 对于 [springcloud-alibaba-nacos-config-6300](../springcloud-alibaba-nacos-config-6300) 而言，需要在 Nacos 控制台创建 `nacos-config-demo-dev.yaml` ，并添加 `config-test.str=` 的配置。
 
+## Nacos 自动刷新配置 / 配置热更新
+
+**当使用 `@Value` 的方式注入配置时**
+
+在使用了 `@Value` 的类上，添加 `@RefreshScope` 注解就可以了。
+
+比如 [springcloud-alibaba-nacos-config-6300 的 ConfigDemoController](../springcloud-alibaba-nacos-config-6300/src/main/java/com/example/springcloud/alibaba/controller/ConfigDemoController.java) 中使用了：
+
+```java
+@Value("${config-test.str}")
+private String str;
+```
+
+所以只需要在该类上添加 `@RefreshScope` 注解即可：
+
+```java
+@RestController
+@RequestMapping("/config")
+@RefreshScope
+public class ConfigDemoController {}
+```
+
+---
+
+
+
 # Open Feign：HTTP Client
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
