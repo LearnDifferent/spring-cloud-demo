@@ -889,6 +889,8 @@ spring:
 
 可以参考 [springcloud-alibaba-nacos-config-6300 的 bootstrap.yml](../springcloud-alibaba-nacos-config-6300/src/main/resources/bootstrap.yml)
 
+对于 [springcloud-alibaba-nacos-config-6300](../springcloud-alibaba-nacos-config-6300) 而言，需要在 Nacos 控制台创建 `nacos-config-demo-dev.yaml` ，并添加 `config-test.str=` 的配置。
+
 # Open Feign：HTTP Client
 
 > Eureka 框架中的 注册、续约 等，底层都是使用的 RestTemplate
