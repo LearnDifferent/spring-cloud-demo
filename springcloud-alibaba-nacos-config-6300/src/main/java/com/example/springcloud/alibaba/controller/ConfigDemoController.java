@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigDemoController {
 
     /**
-     * 需要去 Nacos 控制台配置 config-test.str
+     * 需要去 Nacos 控制台创建 nacos-config-demo-dev.yaml 配置，并增加 config-test.str
      */
     @Value("${config-test.str}")
     private String str;
