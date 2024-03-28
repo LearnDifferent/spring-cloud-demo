@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Provider
+ * Nacos Configuration Demo
  *
  * @author zhou
- * @date 2024/3/25
+ * @date 2024/3/27
  */
 @RestController
 @RequestMapping("/config")
