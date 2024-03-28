@@ -8,7 +8,7 @@
     <artifactId>spring-cloud-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>springcloud-api</module>
+        <module>springcloud-common-demo-api</module>
         <module>springcloud-alibaba-nacos-6001</module>
         <module>springcloud-alibaba-nacos-provider-6100</module>
         <module>springcloud-alibaba-nacos-consumer-6200</module>

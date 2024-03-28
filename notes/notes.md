@@ -438,9 +438,9 @@ VALUES
         (7,'后勤部',DATABASE());
 ```
 
-完成后，Java 实体类可以参考：[springcloud-api](../springcloud-api) 的 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java)
+完成后，Java 实体类可以参考：[springcloud-common-demo-api](../springcloud-common-demo-api) 的 [Dept.java](../springcloud-common-demo-api/src/main/java/com/example/springcloud/api/pojo/Dept.java)
 
-> 注意：因为 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](../springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](../springcloud-api) 的依赖。参考：[springcloud-consumer-dept-8100 中的 pom.xml](../springcloud-consumer-dept-8100/pom.xml)
+> 注意：因为 [Dept.java](../springcloud-common-demo-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-common-demo-api](../springcloud-common-demo-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-common-demo-api](../springcloud-common-demo-api) 的依赖。参考：[springcloud-consumer-dept-8100 中的 pom.xml](../springcloud-consumer-dept-8100/pom.xml)
 
 ## IDEA 配置多实例技巧
 

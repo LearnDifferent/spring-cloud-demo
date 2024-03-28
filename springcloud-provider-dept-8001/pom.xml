@@ -22,7 +22,7 @@
         <dependency>
             <!--groupId 去之前已经写好的 pom 里找-->
             <groupId>org.example</groupId>
-            <artifactId>springcloud-api</artifactId>
+            <artifactId>springcloud-common-demo-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--Provider 需要使用 Eureka Client-->

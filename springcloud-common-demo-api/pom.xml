@@ -9,7 +9,7 @@
     </parent>
     <!--parent 就是总工程内写好的 pom，要使用的话，还要在微服务项目中单独导入-->
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>springcloud-api</artifactId>
+    <artifactId>springcloud-common-demo-api</artifactId>
     <!--从总项目定义好的 <dependencyManagement> 中导入当前项目需要的依赖-->
     <dependencies>
         <dependency>
