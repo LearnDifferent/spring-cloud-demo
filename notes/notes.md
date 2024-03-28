@@ -1095,7 +1095,7 @@ public HttpClient httpClient() {
 
 通过以上步骤，你可以根据自己的需要选择和配置不同的HTTP客户端。确保选择符合你项目需求的客户端，以获得最佳的性能和效率。
 
-## Open Feign 在项目中的使用
+## Open Feign 基础内容在项目中的使用
 
 Open Feign 相关代码：
 
@@ -1104,6 +1104,34 @@ Open Feign 相关代码：
 - 在 Controller 中使用 Open Feign： [ConsumerController.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
 - 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
 
+## Open Feign 最佳实践
+
+将 Open Feign 作为一个依赖，把接口全部定义好，当其他服务需要的时候将其作为依赖去引用，这样维护 API 比较方便。
+
+在项目中是 [springcloud-openfeign-api](../springcloud-openfeign-api) ，其在 [pom.xml](../springcloud-openfeign-api/pom.xml) 中引入了 `spring-cloud-starter-openfeign` 依赖，然后在 [ProviderClient](../springcloud-openfeign-api/src/main/java/com/example/springcloud/ProviderClient.java) 中将 `nacos-provider` 服务的接口定义好就行了。
+
+>注：假设是 order-service 服务的接口，我们一般在 api 项目中写为 
+`OrderClient` ，这个 Client 指的就是服务客户端
+
+> 如果有 Open Feign 相关的配置，也可以写进其的 `application.yml` 或自己写个 `@Configuration` 配置类。
+> 
+> 如果有实体类，照样可以写在这里面。
+> 
+> 这里写作 `springcloud-openfeign-api` 是为了方便学习 Open Feign，实际项目中，可以将这个项目简单写为 `项目名-api` 或 `项目名-common-api`
+
+在使用的时候，需要：
+
+1. 导入 api 项目的依赖
+2. 在 Spring Boot 启动类上，添加 `@EnableFeignClients(clients = {Service1Client.class, Service2Client.class})` 来引入 api 项目中，需要的服务的客户端
+3. 在需要调用该服务客户端的地方，引入 api 项目中对应的 Client 的类即可
+
+这里可以参考 [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) ：
+
+1. 导入依赖：[pom.xml](../springcloud-alibaba-nacos-consumer-6200/pom.xml)
+2. 在 [启动类](../springcloud-alibaba-nacos-consumer-6200/src/main/java/com/example/springcloud/alibaba/NacosConsumer6200.java) 添加注解
+3. 在 [需使用的地方](../springcloud-alibaba-nacos-consumer-6200/src/main/java/com/example/springcloud/alibaba/controller/ConsumerController.java) ，引入对应的 Client(s)
+
+注意，负载均衡的配置不要写在 Open Feign 的 api 项目中，而还是继续写在消费者服务的客户端上，在项目中也就是 [springcloud-alibaba-nacos-consumer-6200 的 application.yml](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
 # Ribbon：负载均衡
 
 ## Ribbon 相关基础概念
