@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>springcloud-consumer-dept-openfeign</artifactId>
+    <artifactId>springcloud-consumer-dept-openfeign-8101</artifactId>
 
     <dependencies>
         <!--消费者需要实体类-->

@@ -1,6 +1,7 @@
 package com.example.springcloudconsumerdept80.service;
 
 import com.example.springcloud.api.pojo.Dept;
+import com.example.springcloudconsumerdept80.ConsumerDeptFeign8101;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 记得在当前接口上，添加注解 @Component（或 @Service）。
- * 如果没有添加 @Component ，就需要在 {@link com.example.springcloudconsumerdept80.ConsumerDeptFeign80 主启动类} 上
+ * 如果没有添加 @Component ，就需要在 {@link ConsumerDeptFeign8101 主启动类} 上
  * 使用 @EnableFeignClients 注解，然后再使用该注解的 basePackageClasses 属性扫描到这个类。
  * <p>
  * Declare a Feign client using @FeignClient，

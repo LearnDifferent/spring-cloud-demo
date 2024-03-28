@@ -15,10 +15,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @EnableFeignClients
 @SpringBootApplication
-public class ConsumerDeptFeign80 {
+public class ConsumerDeptFeign8101 {
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsumerDeptFeign80.class, args);
+        SpringApplication.run(ConsumerDeptFeign8101.class, args);
     }
 
 }

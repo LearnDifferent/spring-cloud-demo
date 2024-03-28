@@ -466,7 +466,7 @@ IDEA 判断一个项目为微服务时，会有一个【Services】选项。我�
 项目中的 Consumer：
 
 - [springcloud-consumer-dept-8100](../springcloud-consumer-dept-8100)
-- [springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
+- [springcloud-consumer-dept-openfeign-8101](../springcloud-consumer-dept-openfeign-8101)
 - [springcloud-consumer-hystrix-dashboard-9001](../springcloud-consumer-hystrix-dashboard-9001)
 
 项目中的 Provider：
@@ -1018,7 +1018,7 @@ public class TestController {
 
 ## Open Feign 优化配置
 
-Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](../springcloud-consumer-dept-openfeign/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
+Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](../springcloud-consumer-dept-openfeign-8101/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
 
 ```yaml
 feign:
@@ -1034,10 +1034,10 @@ feign:
 
 Open Feign 相关代码：
 
-- 总体模块：[springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
-- Open Feign Client 接口的写法：[DeptClient.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/service/DeptClient.java)
-- 在 Controller 中使用 Open Feign： [ConsumerController.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
-- 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
+- 总体模块：[springcloud-consumer-dept-openfeign-8101](../springcloud-consumer-dept-openfeign-8101)
+- Open Feign Client 接口的写法：[DeptClient.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/service/DeptClient.java)
+- 在 Controller 中使用 Open Feign： [ConsumerController.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
+- 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
 
 # Ribbon：负载均衡
 
@@ -1291,7 +1291,7 @@ Hystrix 仪表盘：
 
 > 下面的代码可以查看 [springcloud-provider-dept-hystrix-8003](../springcloud-provider-dept-hystrix-8003) 。
 > 
-> OpenFeign 的降级方法可以查看 [springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign) 。一般如果在 OpenFeign 的服务中，还有一套单独的 Hystrix，那 OpenFeign 和 Hystrix 都需要配置降级方案。
+> OpenFeign 的降级方法可以查看 [springcloud-consumer-dept-openfeign-8101](../springcloud-consumer-dept-openfeign-8101) 。一般如果在 OpenFeign 的服务中，还有一套单独的 Hystrix，那 OpenFeign 和 Hystrix 都需要配置降级方案。
 
 **1. 熔断触发降级**
 
@@ -1354,7 +1354,7 @@ Hystrix 仪表盘：
   - [springcloud-provider-dept-hystrix-8002](../springcloud-provider-dept-hystrix-8002)
   - [springcloud-provider-dept-hystrix-8003](../springcloud-provider-dept-hystrix-8003)
 - Consumer 端：
-  - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
+  - 内置 Hystrix 的 Feign：[springcloud-consumer-dept-openfeign-8101](../springcloud-consumer-dept-openfeign-8101)
   - Hystrix Dashboard：[springcloud-consumer-hystrix-dashboard-9001](../springcloud-consumer-hystrix-dashboard-9001)
 
 参考资料：[Spring BootでCircuit Breaker(Spring Cloud Netflix Hystrix)を試す](http://pppurple.hatenablog.com/entry/2017/01/11/235814)
