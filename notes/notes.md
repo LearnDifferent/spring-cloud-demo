@@ -912,10 +912,18 @@ private String str;
 @RefreshScope
 public class ConfigDemoController {}
 ```
+这种 `@Value` 注入的方式，如果本地和远程配置文件中都没有该配置，就会报错 NPE，所以一定要记得在配置中加上。
 
 ---
 
+更推荐 **创建 `@ConfigurationProperties` 配置类的方法** 。
 
+创建一个 `@ConfigurationProperties(prefix = "...")` + `@Component` 的 Properties 类：
+
+- 这样就不需要添加 `@RefreshScope` 注解
+- 而且本地和远程的配置文件中，即使找不到该配置，也不会出现空指针异常 NPE
+
+可以参考 [springcloud-alibaba-nacos-config-6301](../springcloud-alibaba-nacos-config-6301) 项目，里面的 [ConfigDemoProperties](../springcloud-alibaba-nacos-config-6301/src/main/java/com/example/springcloud/alibaba/config/ConfigDemoProperties.java) 就是配置类，这样就不用加 `@RefreshScope` 注解，不提前定义配置也不会在创建的时候出现 NPE。
 
 # Open Feign：HTTP Client
 
