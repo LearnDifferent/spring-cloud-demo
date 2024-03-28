@@ -1016,19 +1016,84 @@ public class TestController {
 }
 ```
 
-## Open Feign 优化配置
+## Open Feign 性能优化配置
 
-Open Feign 默认使用的是性能没那么好的 HttpClient，可以在 [application.yml](../springcloud-consumer-dept-openfeign-8101/src/main/resources/application.yml) 中关闭 HttpClient，并替换为 OK HTTP Client：
+Open Feign 可以在 [application.yml](../springcloud-consumer-dept-openfeign-8101/src/main/resources/application.yml) 中替换为性能更好的 OK HTTP Client：
 
 ```yaml
 feign:
-  # 关闭默认的 HttpClient
-  httpclient:
-    enabled: false
   # 开启 Ok HTTP Client
   okhttp:
     enabled: true
 ```
+
+以下来自 ChatGPT 4：
+
+OpenFeign默认使用的是`URLConnection`作为其底层的HTTP客户端。OpenFeign提供了灵活性，允许用户根据需求选择不同的HTTP客户端，例如`HttpClient`和`OkHttp`。
+
+**它们之间的区别：**
+
+1. **URLConnection**: 是Java标准库的一部分，它相对简单，不需要额外的依赖，但功能也比较基础。对于一些简单的HTTP请求，它可能是足够的。但对于需要更多高级功能的场景（如连接池管理、更复杂的请求/响应处理），它可能就不太适合了。
+
+2. **HttpClient**: 属于Apache HttpComponents项目。它是一个成熟的、功能丰富的HTTP客户端，提供了更细粒度的控制和更多的高级特性，如连接池、超时设置等。这使得它在处理复杂HTTP请求时更加灵活和强大。
+
+3. **OkHttp**: 是一个现代的、高效的HTTP客户端，由Square开发。它支持SPDY、连接池、GZIP压缩和HTTP/2等特性。OkHttp的API设计简洁，易于使用，且性能优异，特别是在移动设备上。
+
+**推荐使用哪个？**
+
+选择哪个HTTP客户端取决于你的具体需求。如果你需要更多的高级特性（如连接池管理、HTTP/2支持），`HttpClient`或`OkHttp`可能是更好的选择。对于现代应用程序，特别是在性能和高级特性方面，`OkHttp`通常是推荐的选择。
+
+**配置方式：**
+
+要在OpenFeign中使用`HttpClient`或`OkHttp`，你需要添加相应的依赖，并进行简单的配置。
+
+**对于OkHttp**:
+
+1. 添加依赖:
+
+```xml
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-okhttp</artifactId>
+    <version>您的OpenFeign版本</version>
+</dependency>
+```
+
+2. 配置Feign使用OkHttp:
+
+在你的配置类中，创建一个`OkHttpClient`的Bean，Feign会自动使用它：
+
+```java
+@Bean
+public okhttp3.OkHttpClient okHttpClient() {
+    return new okhttp3.OkHttpClient();
+}
+```
+
+**对于HttpClient**:
+
+1. 添加依赖:
+
+```xml
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-httpclient</artifactId>
+    <version>您的OpenFeign版本</version>
+</dependency>
+```
+
+2. 配置Feign使用HttpClient:
+
+同样，在你的配置类中创建一个`HttpClient`的Bean：
+
+```java
+@Bean
+public HttpClient httpClient() {
+    return HttpClientBuilder.create().build();
+}
+```
+
+通过以上步骤，你可以根据自己的需要选择和配置不同的HTTP客户端。确保选择符合你项目需求的客户端，以获得最佳的性能和效率。
 
 ## Open Feign 在项目中的使用
 

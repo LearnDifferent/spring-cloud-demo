@@ -17,9 +17,6 @@ feign:
   # 如果是 Provider 的话就不用写这个配置，但是主启动类一定要加 @EnableCircuitBreaker
   hystrix:
     enabled: true
-  # 关闭默认的 HttpClient
-  httpclient:
-    enabled: false
   # 开启 Ok HTTP Client
   okhttp:
     enabled: true
