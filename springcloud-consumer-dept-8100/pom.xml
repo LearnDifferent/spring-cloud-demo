@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>springcloud-consumer-dept-80</artifactId>
+    <artifactId>springcloud-consumer-dept-8100</artifactId>
     <!--消费者只需要实体类和 Web 依赖-->
     <dependencies>
         <!--消费者需要实体类-->

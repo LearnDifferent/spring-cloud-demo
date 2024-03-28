@@ -440,7 +440,7 @@ VALUES
 
 完成后，Java 实体类可以参考：[springcloud-api](../springcloud-api) 的 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java)
 
-> 注意：因为 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](../springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](../springcloud-api) 的依赖。参考：[springcloud-consumer-dept-80 中的 pom.xml](../springcloud-consumer-dept-80/pom.xml)
+> 注意：因为 [Dept.java](../springcloud-api/src/main/java/com/example/springcloud/api/pojo/Dept.java) 是在单独的 Module（也就是 [springcloud-api](../springcloud-api) ）中的，所以如果需要使用这个实体类的时候，需要先引入 [springcloud-api](../springcloud-api) 的依赖。参考：[springcloud-consumer-dept-8100 中的 pom.xml](../springcloud-consumer-dept-8100/pom.xml)
 
 ## IDEA 配置多实例技巧
 
@@ -465,7 +465,7 @@ IDEA 判断一个项目为微服务时，会有一个【Services】选项。我�
 
 项目中的 Consumer：
 
-- [springcloud-consumer-dept-80](../springcloud-consumer-dept-80)
+- [springcloud-consumer-dept-8100](../springcloud-consumer-dept-8100)
 - [springcloud-consumer-dept-openfeign](../springcloud-consumer-dept-openfeign)
 - [springcloud-consumer-hystrix-dashboard-9001](../springcloud-consumer-hystrix-dashboard-9001)
 
@@ -942,7 +942,7 @@ public class ConfigDemoController {}
 
 在学习 [Open Feign](#open-feign) 之前需要了解 RestTemplate。
 
-> 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-80](../springcloud-consumer-dept-80)
+> 本项目中，RestTemplate 和 Ribbon 相关代码：[springcloud-consumer-dept-8100](../springcloud-consumer-dept-8100)
 > 
 > 我在 [LearnDifferent/github-stars](https://github.com/LearnDifferent/github-stars) 中，也使用过 RestTemplate，可以查看 [RestTemplate 的配置类](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/config/RestTemplateConfig.java) 和 [RestTemplate 在 Service 中的使用](https://github.com/LearnDifferent/github-stars/blob/master/src/main/java/com/github/learndifferent/githubstars/service/impl/RepoServiceImpl.java)
 
@@ -954,11 +954,11 @@ RestTemplate 是 Spring 提供的一个访问 Http 服务的客户端类：
 
 <span id="use-ribbon">需要先在配置类中添加 RestTemplate 的 Bean，并加上 `@LoadBalanced` 负载均衡的注解，来实现（Ribbon）负载均衡的服务调用</span>，参考：
 
-- [ConfigBean.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) 的 `public RestTemplate getRestTemplate()`
+- [ConfigBean.java](../springcloud-consumer-dept-8100/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) 的 `public RestTemplate getRestTemplate()`
 
 在 Consumer 中使用的时候，可以参考：
 
-- [ConsumerController.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
+- [ConsumerController.java](../springcloud-consumer-dept-8100/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
 
 再比如，这个时候「消费者 B」需要调用「提供者 A」所提供的服务时，需要这么写：
 
@@ -1137,7 +1137,7 @@ providerName:
 - 除了 Netflix 的负载均衡规则，还可以设置 Spring Cloud Alibaba 的：`com.alibaba.cloud.nacos.ribbon.NacosRule`
 - 可以参考 [springcloud-alibaba-nacos-consumer-6200 的配置文件](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
 
-2. `@Configuration` 配置类（可以查看 [springcloud-consumer-dept-80](../springcloud-consumer-dept-80) 模块的 [ConfigBean.java](../springcloud-consumer-dept-80/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) ）：
+2. `@Configuration` 配置类（可以查看 [springcloud-consumer-dept-8100](../springcloud-consumer-dept-8100) 模块的 [ConfigBean.java](../springcloud-consumer-dept-8100/src/main/java/com/example/springcloudconsumerdept80/config/ConfigBean.java) ）：
 
 ```java
 // 默认是轮询，可以通过加入 Spring 容器来改变算法策略
