@@ -1,4 +1,4 @@
-package com.example.springcloud.alibaba.service;
+package com.example.springcloud;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @FeignClient(value = "nacos-provider")
 @Component
-public interface ProviderService {
+public interface ProviderClient {
 
     /**
      * Query GET nacos-provider/provider/api

@@ -1,7 +1,8 @@
 package com.example.springcloud.alibaba.controller;
 
-import com.example.springcloud.alibaba.service.ProviderService;
+import com.example.springcloud.ProviderClient;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,20 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/consumer")
+@RequiredArgsConstructor
 public class ConsumerController {
 
-    private final ProviderService providerService;
+    private final ProviderClient providerClient;
 
     private static final UUID ID = UUID.randomUUID();
-
-    public ConsumerController(ProviderService providerService) {
-        this.providerService = providerService;
-    }
 
     @GetMapping("/api")
     public String hello() {
         // result from provider
-        String result = providerService.providerApi();
+        String result = providerClient.providerApi();
         return "[Consumer ID: " + ID + "]: " + result;
     }
 }
