@@ -857,7 +857,10 @@ Maven 依赖：
 
 在 Nacos 控制台右侧，有【配置管理】菜单按钮，在该菜单中有【配置列表】，进入【配置列表】页面后，点击 + 号就可以【新建配置】，有以下输入框和选项：
 
-- Data ID：配置文件的 ID。我们可以使用“服务名-环境.yaml”的形式命名，比如：userservice-dev.yaml、orderservice-uat.yaml 等
+- Data ID：
+	- 配置文件的 ID
+	- 我们可以使用“服务名-环境.yaml”的形式命名，比如：userservice-dev.yaml、orderservice-uat.yaml 等
+	- 也可以直接“服务名.yaml”，也就是不指定环境。可以参考 [[#配置文件的优先级]] 。
 - Group：分组名称。一般采用默认即可。
 - 描述：自己填写
 - 配置格式：选择配置文件的格式
@@ -924,6 +927,12 @@ public class ConfigDemoController {}
 - 而且本地和远程的配置文件中，即使找不到该配置，也不会出现空指针异常 NPE
 
 可以参考 [springcloud-alibaba-nacos-config-6301](../springcloud-alibaba-nacos-config-6301) 项目，里面的 [ConfigDemoProperties](../springcloud-alibaba-nacos-config-6301/src/main/java/com/example/springcloud/alibaba/config/ConfigDemoProperties.java) 就是配置类，这样就不用加 `@RefreshScope` 注解，不提前定义配置也不会在创建的时候出现 NPE。
+
+## 配置文件的优先级
+
+**远程的配置文件，优先级大于本地的配置文件** 。比如 Nacos 中设置的配置，肯定是比本地的配置优先级高，这样才能实现远程配置管理。 **实际上就是 `bootstrap.yml > application.yml`** 
+
+在指定环境下， **指定环境的配置大于无指定环境的配置** 。也就是说，在 dev 环境下， `application-dev.yml > application.yml`
 
 # Open Feign：HTTP Client
 
