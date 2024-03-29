@@ -1639,6 +1639,8 @@ spring:
 
 ## `GatewayFilter` Factories
 
+>过滤器（Filters）是用于在请求被路由前或路由后执行的一段逻辑
+
 >[`GatewayFilter` Factories](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gatewayfilter-factories) 是一种配置上的简单路由过滤器，处理逻辑是固定的，不支持自定义
 
 Spring Cloud Gateway 还可以添加 Filters 过滤器。
@@ -1666,6 +1668,21 @@ spring:
       - AddResponseHeader=X-Response-Default-Red, Default-Blue
       - PrefixPath=/httpbin
 ```
+
+## Global Filters
+
+Spring Cloud Gateway 的 Global Filters 是自定义的配置，需要编码完成，对所有的路由都会生效。
+
+使用方法：
+
+1. 引入 `spring-cloud-starter-gateway` 的依赖
+2. 创建 Filter 类，实现 `GlobalFilter` 接口 `implements GlobalFilter` ，并添加 `@Component` 和 `@Order()` 注解，参考 [springcloud-gateway-9800 的 config/SimpleAuthGlobalFilter](../springcloud-gateway-9800/src/main/java/com/example/springcloudgateway9800/config/SimpleAuthGlobalFilter.java)
+3. 在 Filter 类内，编写过滤逻辑 `public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)` 的方法
+	- 参数 `ServerWebExchange` 是请求的上下文，用于获取 Request 和 Response 等信息
+	- 参数 `GatewayFilterChain` 是 Global Chain，主要用于将请求传递到下一个过滤器中
+	- 具体使用参考 [springcloud-gateway-9800 的 config/SimpleAuthGlobalFilter](../springcloud-gateway-9800/src/main/java/com/example/springcloudgateway9800/config/SimpleAuthGlobalFilter.java)
+
+需要注意的是，Spring Cloud Gateway 使用了 Spring WebFlux 响应式编程，所以编写方法有些不同。
 
 # Zuul 微服务网关
 ## Zuul 基础
