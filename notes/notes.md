@@ -351,26 +351,6 @@ HTTP 和 RPC 的主要区别：
 
 - 像 Web 网站的 http 服务一般都用短链接，因为长连接对于服务端来说会耗费一定的资源，而像 Web 网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源，如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的话，那可想而知吧。所以并发量大，但每个用户无需频繁操作情况下需用短连好。
 
-## <span id='gateway'>微服务网关</span>
-
-**<u>为什么要使用微服务网关？</u>**
-
-在微服务中，假设有【订单服务】【库存服务】【评论服务】。现在 client 要访问这些服务的时候，每个服务肯定要对 client 进行【授权和认证】。
-
-如果把【授权和认证功能】放到每个服务中，也就是在【订单服务】【库存服务】【评论服务】都添加【授权和认证功能】，其实就没什么必要。虽然可以专门出一个用于【授权和认证的服务】，但是从 client 到授权认证服务，再到其他服务，但是这也涉及到各个服务间的通信网络通信损耗。
-
-此时可以将【授权和认证功能】交给网关（Gateway）来处理。
-
-在 client 和各个服务之间加一个【网关】来**拦截请求**，在完成**授权**、**日志**和**限流**等功能后，再**转发**到各个微服务上。
-
----
-
-**<u>为什么 Spring 官方要出 Spring Cloud Gateway 来取代 Zuul？</u>**
-
-1. Zuul 1.x 是基于 BIO 的，而网关又是需要很强的通信性能的组件
-2. Spring Cloud Gateway 是 NIO 的网关，它的底层基于 Spring Webflux（基于 Reactor 的响应模式）
-
-
 # Spring Cloud 项目基本说明
 
 ## 项目基本说明
@@ -1259,7 +1239,7 @@ ribbon:
 	    - service3...
 ```
 
-# 熔断和降级 Hystrix
+# Hystrix 熔断和降级
 
 ## 熔断和降级 / Hystrix - 相关基础
 
@@ -1531,9 +1511,33 @@ Dashboard 图形信息的含义：
 
 参考资料：[hystrixDashboard(服务监控)](https://www.cnblogs.com/yufeng218/p/11489175.html) 或者 [这篇](https://blog.csdn.net/VisionLau/article/details/110803184)
 
-# 微服务网关
+# Spring Cloud Gateway 微服务网关
 
-> 可以先阅读上文中的 [微服务网关部分](#gateway)
+## 微服务网关基础
+
+**<u>为什么要使用微服务网关？</u>**
+
+在微服务中，假设有【订单服务】【库存服务】【评论服务】。现在 client 要访问这些服务的时候，每个服务肯定要对 client 进行【授权和认证】。
+
+如果把【授权和认证功能】放到每个服务中，也就是在【订单服务】【库存服务】【评论服务】都添加【授权和认证功能】，其实就没什么必要。虽然可以专门出一个用于【授权和认证的服务】，但是从 client 到授权认证服务，再到其他服务，但是这也涉及到各个服务间的通信网络通信损耗。
+
+所以我们将【授权和认证功能】交给网关（Gateway）来处理。这样也可以保证只有内部人员可以访问的系统，不会被外部请求访问到。
+
+在 client 和各个服务之间加一个【网关】来**拦截请求**，在完成**授权**、**日志**和**限流**等功能后，再**转发**到各个微服务上。
+
+**网关的功能：**
+
+- 身份认证和权限校验
+- 为服务路由，并实现负载均衡
+- 请求限流
+
+---
+
+**<u>为什么 Spring 官方要出 Spring Cloud Gateway 来取代 Zuul？</u>**
+
+1. Zuul 1.x 是基于 BIO 的 Servlet 实现，属于阻塞式编程，而网关是需要很强的通信性能的组件
+2. Spring Cloud Gateway 是 NIO 的网关，它的底层基于 Spring 5 开始提供的 Spring Webflux，属于 Reactor 的响应编程的实现，性能更好
+
 
 ## Spring Cloud Gateway 基础
 
@@ -1553,8 +1557,7 @@ Route:
 
 Predicate: 
 
-- This is a [Java 8 Function Predicate](https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html). The input type is a [Spring Framework `ServerWebExchange`](https://docs.spring.io/spring/docs/5.0.x/javadoc-api/org/springframework/web/server/ServerWebExchange.html). 
-
+- This is a [Java 8 Function Predicate](https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html). The input type is a [Spring Framework `ServerWebExchange`](https://docs.spring.io/spring/docs/5.0.x/javadoc-api/org/springframework/web/server/ServerWebExchange.html)
 - This lets you match on anything from the HTTP request, such as headers or parameters.
 
 Filter: 
@@ -1579,6 +1582,62 @@ The reason the filters are divided by the dotted line is that filters can run lo
 
 All “pre” filter logic is executed. Then the proxy request is made. After the proxy request is made, the “post” filter logic is run.
 
+## Spring Cloud Gateway 基础实战及 Route Predicate Factories
+
+1. 引入 Spring Cloud Gateway 和服务注册发现组件的依赖。参考 [springcloud-gateway-9800/pom.xml](../springcloud-gateway-9800/pom.xml) ：
+
+```pom
+<dependencies>  
+    <!-- Spring Cloud Gateway -->  
+    <dependency>  
+        <groupId>org.springframework.cloud</groupId>  
+        <artifactId>spring-cloud-starter-gateway</artifactId>  
+    </dependency>  
+    <!-- Spring Cloud Alibaba Nacos Discovery -->  
+    <dependency>  
+        <groupId>com.alibaba.cloud</groupId>  
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>  
+    </dependency>  
+</dependencies>
+```
+
+2. 在配置文件中，添加路由配置和服务注册与发现的地址。参考：[springcloud-gateway-9800 的 application.yml](../springcloud-gateway-9800/src/main/resources/application.yml) ：
+
+```yml
+server:  
+  # Gateway Port  
+  port: 9800  
+spring:  
+  application:  
+    # Gateway Application Name  
+    name: spring-cloud-gateway  
+  cloud:  
+    nacos:  
+      # Nacos Server Address  
+      server-addr: localhost:8848  
+    gateway:  
+      # 这里可以用列表形式配置多个路由  
+      routes:  
+        # 路由唯一 ID，可以自定义，但是最好使用服务名（这里自定义了一个新的 ID，不过还是建议使用服务名）  
+        - id: nacos-provider-service  
+          # URI 地址可以使用 http/https
+          # 但是推荐使用这种负载均衡的形式，也就是 lb://服务名
+          uri: lb://nacos-provider  
+          # 断言配置，判断是否符合规则，如果符合才放行，否则就会 404
+          # 注意，可以根据断言工厂 predicate factory，配置多个断言
+          predicates:  
+            # 路径断言，符合路径规则时才放行
+            - Path=/provider/**  
+        # 这里再用服务名作为 ID 展示一下规范点的写法
+        - id: nacos-consumer  
+          uri: lb://nacos-consumer  
+          predicates:  
+            - Path=/consumer/**
+```
+
+配置中的 Predicates 除了 Path 路径断言之外，还有其他的配置，具体的可以查看 [Route Predicate Factories 官方文档](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gateway-request-predicates-factories)
+
+# Zuul 微服务网关
 ## Zuul 基础
 
 API Gateway（网关）：
