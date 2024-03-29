@@ -1,9 +1,30 @@
 ﻿server:
+  # Gateway Port
   port: 9800
 spring:
   application:
+    # Gateway Application Name
     name: spring-cloud-gateway
   cloud:
+    nacos:
+      # Nacos Server Address
+      server-addr: localhost:8848
     gateway:
+      # 这里可以用列表形式配置多个路由
       routes:
-        # 可以配置多个路由
+        # 路由唯一 ID，可以自定义，但是最好使用服务名（这里自定义了一个新的 ID，不过还是建议使用服务名）
+        - id: nacos-provider-service
+          # URI 地址可以使用 http/https
+          # 但是推荐使用这种负载均衡的形式，也就是 lb://服务名
+          uri: lb://nacos-provider
+          # 断言配置，判断是否符合规则，如果符合才放行，否则就会 404
+          # 注意，可以根据断言工厂 predicate factory，配置多个断言
+          # Predicate Factory 可以查看文档：https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gateway-request-predicates-factories
+          predicates:
+            # 路径断言，符合路径规则时才放行
+            - Path=/provider/**
+        # 这里再用服务名作为 ID 展示一下规范点的写法
+        - id: nacos-consumer
+          uri: lb://nacos-consumer
+          predicates:
+            - Path=/consumer/**

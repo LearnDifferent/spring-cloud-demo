@@ -10,6 +10,7 @@
     <modules>
         <module>springcloud-openfeign-api</module>
         <module>springcloud-common-demo-api</module>
+        <module>springcloud-gateway-9800</module>
         <module>springcloud-alibaba-nacos-6001</module>
         <module>springcloud-alibaba-nacos-provider-6100</module>
         <module>springcloud-alibaba-nacos-consumer-6200</module>
