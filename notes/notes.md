@@ -1684,6 +1684,31 @@ Spring Cloud Gateway 的 Global Filters 是自定义的配置，需要编码完�
 
 需要注意的是，Spring Cloud Gateway 使用了 Spring WebFlux 响应式编程，所以编写方法有些不同。
 
+## Spring Cloud Gateway 过滤器 Filters 的执行顺序
+
+Spring Cloud Gateway 的 Filters 分为：
+
+- 局部过滤器（当前路由的过滤器）
+- Default Filters
+- Global Filters
+
+>这几种过滤器，最终都会被转为 `GatewayFilter` 类型放在一个集合里按照顺序生效。
+>
+>局部过滤器（当前路由的过滤器）和 Default Filters，都会通过 `AbstractNameValueGatewayFilterFactory` 抽象类对应的具体工厂类，比如 `AddRequestHeaderGatewayFilterFactory` ，来将这两种过滤器根据配置，直接生成为 `GatewayFilter` 类型。
+>
+>而 Global Filters 则是通过 `FilteringWebHandler` 里面的 `private static class GatewayFilterAdapter implements GatewayFilter` 过滤器适配器，将 `GlobalFilter` 通过适配器的方式转变为 `GatewayFilter` 类型。
+
+Filters 的执行顺序：
+
+1. 首先根据 `@Order` 定义的顺序，Order 越小，优先级越高
+2. 在 Order 数值相等的情况下，按照 `Default Filters > 局部过滤器（当前路由的过滤器） > Global Filters` 的顺序执行
+
+这里需要注意：
+
+- Global Filters 的 Order 是自定义的
+- 局部过滤器（当前路由的过滤器）和 Default Filters 都是 Spring 按照配置文件中的声明顺序指定的，也就是在 application.yml 中，写在前面的优先
+- 除了自定义的 Order 顺序，其余 Order 是 Spring 按照声明的顺序，从 1 开始顺序递增每个 Filter 的 Order
+
 # Zuul 微服务网关
 ## Zuul 基础
 
