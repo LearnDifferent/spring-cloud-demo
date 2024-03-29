@@ -28,3 +28,28 @@ spring:
           uri: lb://nacos-consumer
           predicates:
             - Path=/consumer/**
+      # 全局 CORS
+      globalcors:
+        # 允许 Options 预请求
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          # 对所有路由应用CORS配置
+          '[/**]':
+            # 允许跨域的域名，填写发送请求的前端的地址（跨域是浏览器的拦截机制，所以要写浏览器发出请求的地址，也就是前端地址）
+            allowedOrigins: "https//xxx.com"
+            # 允许 AJAX 跨域的请求方式
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+            # 允许请求中携带的头信息
+            allowedHeaders: "*"
+              # 也可以用列表形式填写下面的类型
+              # - Content-Type
+              # - Authorization
+            # 是否允许携带 Cookie 信息
+            allowCredentials: true
+            # 此次跨域检测的最大有效时长，也就是检测这次后，多久不用再继续检测
+            maxAge: 3600000
