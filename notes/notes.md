@@ -1637,6 +1637,36 @@ spring:
 
 配置中的 Predicates 除了 Path 路径断言之外，还有其他的配置，具体的可以查看 [Route Predicate Factories 官方文档](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gateway-request-predicates-factories)
 
+## `GatewayFilter` Factories
+
+>[`GatewayFilter` Factories](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gatewayfilter-factories) 是一种配置上的简单路由过滤器，处理逻辑是固定的，不支持自定义
+
+Spring Cloud Gateway 还可以添加 Filters 过滤器。
+
+如果是单个路由配置过滤器：
+
+```yml
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: add_request_header_route
+        uri: https://example.org
+        filters:
+        - AddRequestHeader=X-Request-red, blue
+```
+
+如果想让所有路由都配置一个默认的过滤器，就使用 [Default Filters](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#default-filters) ：
+
+```yml
+spring:
+  cloud:
+    gateway:
+      default-filters:
+      - AddResponseHeader=X-Response-Default-Red, Default-Blue
+      - PrefixPath=/httpbin
+```
+
 # Zuul 微服务网关
 ## Zuul 基础
 
