@@ -1709,6 +1709,127 @@ Filters 的执行顺序：
 - 局部过滤器（当前路由的过滤器）和 Default Filters 都是 Spring 按照配置文件中的声明顺序指定的，也就是在 application.yml 中，写在前面的优先
 - 除了自定义的 Order 顺序，其余 Order 是 Spring 按照声明的顺序，从 1 开始顺序递增每个 Filter 的 Order
 
+## Spring Cloud Gateway 跨域配置 CORS Configuration
+
+> 下文摘抄自 [官方文档](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/cors-configuration.html)
+
+You can configure the gateway to control CORS behavior globally or per route. Both offer the same possibilities.
+
+**Global CORS Configuration**
+
+The “global” CORS configuration is a map of URL patterns to [Spring Framework `CorsConfiguration`](https://docs.spring.io/spring/docs/5.0.x/javadoc-api/org/springframework/web/cors/CorsConfiguration.html). The following example configures CORS:
+
+application.yml
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "https://docs.spring.io"
+            allowedMethods:
+            - GET
+```
+
+In the preceding example, CORS requests are allowed from requests that originate from `docs.spring.io` for all GET requested paths.
+
+To provide the same CORS configuration to requests that are not handled by some gateway route predicate, set the `spring.cloud.gateway.globalcors.add-to-simple-url-handler-mapping` property to `true`. This is useful when you try to support CORS preflight requests and your route predicate does not evaluate to `true` because the HTTP method is `options`.
+
+---
+
+**Route CORS Configuration**
+
+The “route” configuration allows applying CORS directly to a route as metadata with key `cors`. Like in the case of global configuration, the properties belong to [Spring Framework `CorsConfiguration`](https://docs.spring.io/spring/docs/5.0.x/javadoc-api/org/springframework/web/cors/CorsConfiguration.html).
+
+> If no `Path` predicate is present in the route '/**' will be applied.
+
+application.yml
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: cors_route
+        uri: https://example.org
+        predicates:
+        - Path=/service/**
+        metadata:
+          cors:
+            allowedOrigins: '*'
+            allowedMethods:
+              - GET
+              - POST
+            allowedHeaders: '*'
+            maxAge: 30
+```
+
+---
+
+在项目中的用例是在 [springcloud-gateway-9800 的 application.yml](../springcloud-gateway-9800/src/main/resources/application.yml) 中：
+
+```yml
+server:
+  # Gateway Port
+  port: 9800
+spring:
+  application:
+    # Gateway Application Name
+    name: spring-cloud-gateway
+  cloud:
+    nacos:
+      # Nacos Server Address
+      server-addr: localhost:8848
+    gateway:
+      # 这里可以用列表形式配置多个路由
+      routes:
+        # 路由唯一 ID，可以自定义，但是最好使用服务名（这里自定义了一个新的 ID，不过还是建议使用服务名）
+        - id: nacos-provider-service
+          # URI 地址可以使用 http/https
+          # 但是推荐使用这种负载均衡的形式，也就是 lb://服务名
+          uri: lb://nacos-provider
+          # 断言配置，判断是否符合规则，如果符合才放行，否则就会 404
+          # 注意，可以根据断言工厂 predicate factory，配置多个断言
+          # Predicate Factory 可以查看文档：https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gateway-request-predicates-factories
+          predicates:
+            # 路径断言，符合路径规则时才放行
+            - Path=/provider/**
+        # 这里再用服务名作为 ID 展示一下规范点的写法
+        - id: nacos-consumer
+          uri: lb://nacos-consumer
+          predicates:
+            - Path=/consumer/**
+      # 全局 CORS
+      globalcors:
+        # 允许 Options 预请求
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          # 对所有路由应用CORS配置
+          '[/**]':
+            # 允许跨域的域名，填写发送请求的前端的地址（跨域是浏览器的拦截机制，所以要写浏览器发出请求的地址，也就是前端地址）
+            allowedOrigins: "https//xxx.com"
+            # 允许 AJAX 跨域的请求方式
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+            # 允许请求中携带的头信息
+            allowedHeaders: "*"
+              # 也可以用列表形式填写下面的类型
+              # - Content-Type
+              # - Authorization
+            # 是否允许携带 Cookie 信息
+            allowCredentials: true
+            # 此次跨域检测的最大有效时长，也就是检测这次后，多久不用再继续检测
+            maxAge: 3600000
+```
+
+
+
 # Zuul 微服务网关
 ## Zuul 基础
 
