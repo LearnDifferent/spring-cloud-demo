@@ -1422,7 +1422,7 @@ java -jar -Dsentinel.dashboard.auth.username=root -Dsentinel.dashboard.auth.pass
 
 ---
 
-如果启动报错，可以参考 [Sentinel_Startup_Error](../Sentinel_Startup_Error.md)（[[Sentinel_Startup_Error|Obsidian 打开链接]]）使用以下命令来启动 Sentinel：
+如果启动报错，可以参考 [Sentinel_Startup_Error](./Sentinel_Startup_Error.md)（[[Sentinel_Startup_Error|Obsidian 打开链接]]）使用以下命令来启动 Sentinel：
 
 ```bash
 java --add-opens java.base/java.lang=ALL-UNNAMED -jar sentinel-dashboard-1.8.1.jar
