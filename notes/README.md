@@ -1082,7 +1082,7 @@ Open Feign 相关代码：
 - 总体模块：[springcloud-consumer-dept-openfeign-8101](../springcloud-consumer-dept-openfeign-8101)
 - Open Feign Client 接口的写法：[DeptClient.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/service/DeptClient.java)
 - 在 Controller 中使用 Open Feign： [ConsumerController.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/controller/ConsumerController.java)
-- 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign80.java)
+- 主启动类：[ConsumerDeptFeign80.java](../springcloud-consumer-dept-openfeign-8101/src/main/java/com/example/springcloudconsumerdept80/ConsumerDeptFeign8101.java)
 
 ## Open Feign 最佳实践
 
@@ -1470,7 +1470,7 @@ spring:
 
 当前项目：
 
-- [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) ：nacos-consumer 引入了 Sentinel 的 [依赖](springcloud-alibaba-nacos-consumer-6200/pom.xml) 并 [配置了 Dashboard](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml) 
+- [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) ：nacos-consumer 引入了 Sentinel 的 [依赖](../springcloud-alibaba-nacos-consumer-6200/pom.xml) 并 [配置了 Dashboard](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml) 
 - [springcloud-alibaba-nacos-provider-6100](../springcloud-alibaba-nacos-provider-6100) ：nacos-consumer 会调用 nacos-provider
 - [springcloud-gateway-9800](../springcloud-gateway-9800) ：spring-cloud-gateway 可以通过发送请求调用 nacos-consumer（参数 auth 是为了通过自定义的认证拦截）
 
