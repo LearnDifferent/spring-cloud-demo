@@ -1430,9 +1430,64 @@ java --add-opens java.base/java.lang=ALL-UNNAMED -jar sentinel-dashboard-1.8.1.j
 
 最后，访问 http://localhost:8080/ 即可。
 
+## Sentinel 快速入门
 
+在 Spring Cloud Alibaba 中使用 Sentinel 可以参考 [官方 Wiki](https://github.com/alibaba/spring-cloud-alibaba/wiki/Sentinel) 。
 
+Sentinel 可以支持 Open Feign 和 Spring Cloud Gateway 等组件，这里以在一般的服务中引入 Sentinel 为快速入门：
 
+首先，需要导入依赖：
+
+```xml
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+</dependency>
+```
+
+---
+
+如果需要使用 Dashboard，可以配置控制台信息 application.yml：
+
+```yml
+spring:
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8080
+```
+
+示例中的 transport 端口和 dashboard 地址都是默认的配置，也就是说，不配置的话就默认使用这个配置。
+
+这里的 `spring.cloud.sentinel.transport.port` 端口配置会在应用对应的机器上启动一个 Http Server，该 Server 会与 Sentinel 控制台做交互。比如 Sentinel 控制台添加了一个限流规则，会把规则数据 push 给这个 Http Server 接收，Http Server 再将规则注册到 Sentinel 中。
+
+[如果 Sentinel Transport 配置的端口（默认是 8719）被占用，会自动选择下一个端口，直到有可用的端口为止。](https://github.com/alibaba/Sentinel/wiki/FAQ#sentinel-transportdashboard-%E7%9B%B8%E5%85%B3)
+
+---
+
+要让 Sentinel Dashboard 有监控数据，需要主动触发 Endpoint（服务的 Controller）。
+
+当前项目：
+
+- [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) ：nacos-consumer 引入了 Sentinel 的 [依赖](springcloud-alibaba-nacos-consumer-6200/pom.xml) 并 [配置了 Dashboard](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml) 
+- [springcloud-alibaba-nacos-provider-6100](../springcloud-alibaba-nacos-provider-6100) ：nacos-consumer 会调用 nacos-provider
+- [springcloud-gateway-9800](../springcloud-gateway-9800) ：spring-cloud-gateway 可以通过发送请求调用 nacos-consumer（参数 auth 是为了通过自定义的认证拦截）
+
+测试的需要启动：
+
+1. 启动 Sentinel Dashboard 的 jar 包（默认是 http://localhost:8080/）
+2. 启动 spring-cloud-gateway 服务
+3. 通过 IDEA 的 [[#IDEA 配置多实例技巧|IDEA 的 Copy Configuration]] 的功能，启动多个 nacos-consumer 服务实例
+4. 启动一个或多个 nacos-provider 服务
+
+此时，发送 GET 请求  http://127.0.0.1:9800/consumer/api?auth=admin  触发 nacos-consumer 的 endpoint。
+
+访问 http://localhost:8080/ 进入 Sentinel Dashboard，就能看到 nacos-consumer 服务的流量监控了。
+
+>这里说明一下，启动 spring-cloud-gateway 是为了方便测试多个 nacos-consumer 服务都有流量经过的情况
+>
+>实际上也可以不启动 spring-cloud-gateway 服务，只需在启动 nacos-consumer 和 nacos-provider 后，发送 GET 请求 http://127.0.0.1:6200/consumer/api 也是一样可以触发 nacos-consumer 的 endpoint，并被 Sentinel 监测到，只是这样在 Dashboard 上就只有一个 nacos-consumer 了
 
 
 
