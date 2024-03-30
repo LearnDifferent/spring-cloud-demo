@@ -8,6 +8,13 @@ spring:
       server-addr: localhost:8848
       discovery:
         cluster-name: SZ
+    sentinel:
+      transport:
+        # Sentinel Transport 的端口，用于在本机启动一个 Http Server 与 Dashboard 交互
+        # 如果端口被占用，会自动选择下一个端口，所以不必太在意，甚至不需要配置也可以
+        port: 8719
+        # Sentinel Dashboard 的访问地址，如果被占用，就修改为其他地址
+        dashboard: localhost:8080
 # Set the load balance rule of nacos-provider service
 nacos-provider:
   ribbon:
