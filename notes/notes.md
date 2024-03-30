@@ -1401,6 +1401,39 @@ ribbon:
 - Hystrix 的控制台比较简单
 - Sentinel 的控制台开箱即用，可以配置各种限流和流量整形规则，还能查看秒级监控，支持机器发现等
 
+## Sentinel Dashboard 控制台
+
+去官方 GitHub [release 页面](https://github.com/alibaba/Sentinel/releases) 下载最新版本的控制台 jar 包，这里使用 [1.8.1 版本](https://github.com/alibaba/Sentinel/releases/download/1.8.1/sentinel-dashboard-1.8.1.jar)
+
+然后参考以下命令启动 sentinel-dashboard-1.8.1.jar 的 Dashboard：
+
+```bash
+# 使用默认端口 8080，用户名和密码都为 sentinel 的方式启动
+java -jar sentinel-dashboard-1.8.1.jar
+
+# 指定端口为 8888 来启动
+java -jar -Dserver.port=8888 sentinel-dashboard-1.8.1.jar
+
+# 指定新的用户名 root 和密码 pwd 来启动
+java -jar -Dsentinel.dashboard.auth.username=root -Dsentinel.dashboard.auth.password=pwd sentinel-dashboard-1.8.1.jar
+```
+
+更多启动参数，可以参考 [官方文档](https://sentinelguard.io/zh-cn/docs/dashboard.html)
+
+---
+
+如果启动报错，可以参考 [Sentinel_Startup_Error](../Sentinel_Startup_Error.md)（[[Sentinel_Startup_Error|Obsidian 打开链接]]）使用以下命令来启动 Sentinel：
+
+```bash
+java --add-opens java.base/java.lang=ALL-UNNAMED -jar sentinel-dashboard-1.8.1.jar
+```
+
+最后，访问 http://localhost:8080/ 即可。
+
+
+
+
+
 
 
 # Hystrix 熔断和降级
