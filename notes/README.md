@@ -1489,7 +1489,33 @@ spring:
 >
 >实际上也可以不启动 spring-cloud-gateway 服务，只需在启动 nacos-consumer 和 nacos-provider 后，发送 GET 请求 http://127.0.0.1:6200/consumer/api 也是一样可以触发 nacos-consumer 的 endpoint，并被 Sentinel 监测到，只是这样在 Dashboard 上就只有一个 nacos-consumer 了
 
+## Sentinel 流量控制相关 Glossary
 
+### 簇点
+
+簇点 Cluster Node 指的是集群中的一个节点。
+
+>虽然这里讨论的是集群流量控制的“簇点”，也就是集群中的单个服务实例或节点。
+>
+>但是将视角缩小到单个 Spring Boot 程序，从 Spring MVC 的某个 Controller 开始，到 Controller 调用 Service，再到 Service 调用 Mapper 执行 SQL 为止的整个请求处理链（处理路径），也可以理解为“簇点”。
+>
+>在应用程序性能监控（APM）或服务追踪的语境中，上面提到的“处理链”可以被视为一个事务或追踪点。
+>
+>在这种情况下，每个独立的请求路径（例如，一个特定的 Controller-Service-Mapper 组合）可以被视为是服务处理能力的一个表现，可以被监控和评估性能。这对于理解应用的运行状况、瓶颈分析和性能优化都非常有帮助。
+>
+>所以，虽然在 Sentinel 的集群流量控制场景中，“簇点”通常指的是服务级别的实体（如微服务实例），但从应用内部处理流程的角度来看，一个从Controller到数据库操作的完整流程，可以类比地被视作是一个逻辑的“处理点”或“追踪点”，用于性能监控和分析。这种视角的转换，虽然不完全符合“簇点”的原始定义，但它有助于我们从不同的角度理解和分析应用程序的行为和性能。
+
+在集群限流模式下，每个节点都会被视为一个簇点，这些簇点可以是提供相同服务的不同实例。
+
+簇点负责记录和报告自己的实时流量信息，并根据从集群流量管理中心下发的规则执行流量控制策略。
+
+### 簇点链路
+
+簇点链路可以理解为服务的调用链路，默认情况下 Sentinel 会监控 SpringMVC 的每个 Endpoint（Controller 的每个请求路径方法）
+
+比如 nacos-consumer 服务的 `/consumer/api` 接口，就是被监控的资源。
+
+簇点链路中被监控的资源，实际上就是每个 Endpoint。
 
 # Hystrix 熔断和降级
 
