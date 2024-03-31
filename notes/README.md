@@ -1592,7 +1592,7 @@ spring:
 
 ![关联模式](./sentinel_flow_control_more1.jpg)
 
-<u>**链路模式** 的使用场景及设置方式：</u>
+<u>**链路模式** 的使用场景及设置方式：</u> ^1ff8ad
 
 使用场景：优先级高的业务流程的终点需要分配更多的资源
 
@@ -1621,6 +1621,40 @@ spring:
 
 除了以上基本配置项，Sentinel 控制台还可能提供更多高级配置，如流量控制的规则状态（开启或关闭）、限流策略的优先级、针对特定来源的限流规则等。这些高级配置项允许用户更精细地控制和调整限流策略，以适应复杂多变的业务需求。
 
+## `@SentinelResource` 注解快速入门和 `spring.cloud.sentinel.web-context-unify=false` 配置
+
+前面提到了 [[#^1ff8ad|链路模式]] ，如果没有专门设置，一般 Sentinel 检测的是 Endpoint，也就是说，监测只会到达 Controller 层。
+
+如果我有 Controller A 和 Controller B，他们都调用了同一个 Service 方法，而我又想设置链路模式，让经过 Controller A 的链路请求优先级高，那么可以先在 Service 方法中添加 `@SentinelResource` 注解。
+
+>`@SentinelResource` 注解是 Sentinel 提供的一种更简洁和优雅的方式，用于声明资源并提供丰富的异常处理选项。
+>
+>通过使用 `@SentinelResource` 注解，你可以轻松地将 Sentinel 的流量控制和熔断保护功能集成到你的Spring Cloud应用中。
+>
+>这个注解不仅可以用于定义资源，还允许你指定流控、降级和异常处理逻辑。
+
+[springcloud-alibaba-sentinel-demo-6400](../springcloud-alibaba-sentinel-demo-6400) 项目中的 [Service 方法](../springcloud-alibaba-sentinel-demo-6400/src/main/java/com/example/springcloud/alibaba/service/impl/GoodServiceImpl.java) 有使用 `@SentinelResource` 注解。
+
+---
+
+Sentinel 会将所有 Web 请求视为一个统一的上下文，这有助于在不同的 Web 框架（如 Spring MVC 和 Spring WebFlux）之间提供一致的限流和降级策略。
+
+也就是说，请求从 Controller 进入程序后，这整个请求都会被当成一个资源整体，所以即便 Service 方法加上了 `@SentinelResource`  注解，两个 Controller 一起请求，这个 Service 也只会算作一个，被归类到第一次调用该 Service 方法的 Controller 下。
+
+
+![](./web-context-unify_true.png)
+>`spring.cloud.sentinel.web-context-unify=true` ，也就是默认的情况，Sentinel Dashboard 如上所示
+
+---
+
+如果想让 Sentinel 将【Controller A 到 service 方法】和【Controller B 到 service 方法】分为两个链路，那么就需要在配置中设置 `spring.cloud.sentinel.web-context-unify=false`
+
+可以参考 [springcloud-alibaba-sentinel-demo-6400 的 application.yml](../springcloud-alibaba-sentinel-demo-6400/src/main/resources/application.yml)
+
+这样的话，Sentinel 就会将两个 Controller 到同一个 Service 方法的请求，视为 2 个不同的链路。
+ 
+![](./web-context-unify_false.png)
+>如上图所示，此时不会再有统一的 sentinel_spring_web_context 来统一整个 Web 的资源，而是每个 `Controller -> Service` 的链路都是不同的 context
 
 # Hystrix 熔断和降级
 
