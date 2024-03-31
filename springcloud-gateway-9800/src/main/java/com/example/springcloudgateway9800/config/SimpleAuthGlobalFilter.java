@@ -34,12 +34,15 @@ public class SimpleAuthGlobalFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         // 获取请求参数
         MultiValueMap<String, String> params = request.getQueryParams();
-        // 获取参数中第一个 auth 的参数
+        // 获取参数中第一个 auth 的参数（如果这个参数不存在，这里设定为不参与权限规则，直接让其通过）
         String authParam = "auth";
         String auth = params.getFirst(authParam);
         // 判断参数值是否可以放行，这里简单判断是否为 admin
-        String authValue = "admin";
-        if (authValue.equalsIgnoreCase(auth)) {
+        // 如果没有 auth 参数，判定为不参与权限判断，直接放行
+        String authCorrectValue = "admin";
+        if (authCorrectValue.equalsIgnoreCase(auth)
+                // 没有 auth 参数，表示不参与权限判断
+                || auth == null) {
             // 放行，将请求传递到下个过滤器
             return chain.filter(exchange);
         }
@@ -50,7 +53,7 @@ public class SimpleAuthGlobalFilter implements GlobalFilter {
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
         System.out.println("[SimpleAuthGlobalFilter] 拦截请求。请在请求中添加此参数：?"
-                + authParam + "=" + authValue);
+                + authParam + "=" + authCorrectValue);
 
         // 最后，将 Response 直接标记为 Complete，在这个过滤器中拦截请求
         return response.setComplete();

@@ -1472,7 +1472,7 @@ spring:
 
 - [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) ：nacos-consumer 引入了 Sentinel 的 [依赖](../springcloud-alibaba-nacos-consumer-6200/pom.xml) 并 [配置了 Dashboard](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml) 
 - [springcloud-alibaba-nacos-provider-6100](../springcloud-alibaba-nacos-provider-6100) ：nacos-consumer 会调用 nacos-provider
-- [springcloud-gateway-9800](../springcloud-gateway-9800) ：spring-cloud-gateway 可以通过发送请求调用 nacos-consumer（参数 auth 是为了通过自定义的认证拦截）
+- [springcloud-gateway-9800](../springcloud-gateway-9800) ：spring-cloud-gateway 可以通过发送请求调用 nacos-consumer
 
 测试的需要启动：
 
@@ -1481,7 +1481,7 @@ spring:
 3. 通过 IDEA 的 [[#IDEA 配置多实例技巧|IDEA 的 Copy Configuration]] 的功能，启动多个 nacos-consumer 服务实例
 4. 启动一个或多个 nacos-provider 服务
 
-此时，发送 GET 请求  http://127.0.0.1:9800/consumer/api?auth=admin  触发 nacos-consumer 的 endpoint。
+此时，发送 GET 请求 http://127.0.0.1:9800/consumer/api 触发 nacos-consumer 的 endpoint。
 
 访问 http://localhost:8080/ 进入 Sentinel Dashboard，就能看到 nacos-consumer 服务的流量监控了。
 
