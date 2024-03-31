@@ -1,0 +1,25 @@
+server:
+  port: 6400
+spring:
+  application:
+    name: sentinel-demo
+  cloud:
+    sentinel:
+      # 默认是 true，表示会把整个 web 请求统一为一个上下文
+      # 也就是说，监控只会区分 Controller 层面的 endpoint，而不会细化到 service 和 mapper 层
+      # 设置为 false 的话，再搭配 @SentinelResource 注解放到 service 或 mapper 层，
+      # 就会把监控的链路细分到 service 或 mapper 层
+      web-context-unify: false
+      transport:
+        # Sentinel Transport 的端口，用于在本机启动一个 Http Server 与 Dashboard 交互
+        # 如果端口被占用，会自动选择下一个端口，所以不必太在意，甚至不需要配置也可以
+        port: 8719
+        # Sentinel Dashboard 的访问地址，如果被占用，就修改为其他地址
+        dashboard: localhost:8080
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        cluster-name: SZ
+nacos-provider:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule

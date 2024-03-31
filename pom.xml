@@ -15,6 +15,7 @@
         <module>springcloud-alibaba-nacos-provider-6100</module>
         <module>springcloud-alibaba-nacos-consumer-6200</module>
         <module>springcloud-alibaba-nacos-config-6300</module>
+        <module>springcloud-alibaba-sentinel-demo-6400</module>
         <module>springcloud-alibaba-nacos-config-6301</module>
         <module>springcloud-provider-dept-8001</module>
         <module>springcloud-eureka-7001</module>
