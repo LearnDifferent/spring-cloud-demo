@@ -383,11 +383,13 @@ Spring Cloud 架构的使用步骤：
     * spring-cloud-starter-netflix-eureka-client
     * spring-cloud-starter-netflix-ribbon
   * Open Feign：spring-cloud-starter-openfeign
+  * Sentinel：spring-cloud-starter-alibaba-sentinel
   * Hystrix：
     * spring-cloud-starter-netflix-hystrix
     * spring-cloud-starter-netflix-hystrix-dashboard
+  * Spring Cloud Gateway：spring-cloud-starter-gateway
   * Zuul：spring-cloud-starter-netflix-zuul
-  * Config：
+  * Spring Cloud Config：
     * spring-cloud-config-server
     * spring-cloud-starter-config
 
