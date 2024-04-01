@@ -1,6 +1,6 @@
 # spring-cloud-demo
 
-Notes and Demo Code for Spring Cloud Microservices with Nacos, Eureka, Open Feign, Ribbon, Hystrix, Zuul and Spring Cloud Config.
+Notes and Demo Code for Spring Cloud Microservices with Nacos, Eureka, Open Feign, Ribbon, Sentinel, Hystrix, Zuul, Spring Cloud Gateway and Spring Cloud Config.
 
 ## Notes
 
