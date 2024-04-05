@@ -1095,8 +1095,10 @@ Open Feign 相关代码：
 >注：假设是 order-service 服务的接口，我们一般在 api 项目中写为 
 `OrderClient` ，这个 Client 指的就是服务客户端
 
-> 如果有 Open Feign 相关的配置，也可以写进其的 `application.yml` 或自己写个 `@Configuration` 配置类。
+> 如果有 Open Feign 相关的配置，需要写在引用这个 api 依赖的项目中的 `application.yml` 或 `@Configuration` 配置类里面。
 > 
+> 比如我的 order-service 的引用了 openfeign-api 项目，那么 Open Feign 相关的配置是写在 order-service 的配置文件里面的，而不是写在 openfeign-api 里面。
+
 > 如果有实体类，照样可以写在这里面。
 > 
 > 这里写作 `springcloud-openfeign-api` 是为了方便学习 Open Feign，实际项目中，可以将这个项目简单写为 `项目名-api` 或 `项目名-common-api`
@@ -1113,7 +1115,9 @@ Open Feign 相关代码：
 2. 在 [启动类](../springcloud-alibaba-nacos-consumer-6200/src/main/java/com/example/springcloud/alibaba/NacosConsumer6200.java) 添加注解
 3. 在 [需使用的地方](../springcloud-alibaba-nacos-consumer-6200/src/main/java/com/example/springcloud/alibaba/controller/ConsumerController.java) ，引入对应的 Client(s)
 
-注意，负载均衡的配置不要写在 Open Feign 的 api 项目中，而还是继续写在消费者服务的客户端上，在项目中也就是 [springcloud-alibaba-nacos-consumer-6200 的 application.yml](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
+注意，负载均衡和 Open Feign 的配置不要写在 Open Feign 的 api 项目中，而还是继续写在消费者服务的客户端上，在项目中也就是 [springcloud-alibaba-nacos-consumer-6200 的 application.yml](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
+
+
 # Ribbon：负载均衡
 
 ## Ribbon 相关基础概念
