@@ -19,3 +19,10 @@ spring:
 nacos-provider:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+# Feign Configuration
+feign:
+  # Enable Sentinel
+  sentinel:
+    enabled: true
+  okhttp:
+    enabled: true
