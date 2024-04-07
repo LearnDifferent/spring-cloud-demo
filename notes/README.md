@@ -1117,6 +1117,40 @@ Open Feign 相关代码：
 
 注意，负载均衡和 Open Feign 的配置不要写在 Open Feign 的 api 项目中，而还是继续写在消费者服务的客户端上，在项目中也就是 [springcloud-alibaba-nacos-consumer-6200 的 application.yml](../springcloud-alibaba-nacos-consumer-6200/src/main/resources/application.yml)
 
+## Open Feign 降级
+
+Open Feign 可以编写降级逻辑，也就是当触发降级时，走另一个方法流程。
+
+使用方法：
+
+1. 编写 Fallback 或 Fallback Factory
+
+Open Feign 是通过创建 Interface 接口去做服务的调用地址映射，而 Fallback 就是一个 `implement` 了该 Interface 接口的具体实现类，当调用不成功或者其他触发了降级的方法时，就去走该接口的具体实现方法。
+
+Fallback Factory 比 Fallback 多了 `Throwable` ，也就是多了错误信息的处理，所以优先使用 Fallback Factory 更好。
+
+可以参考 [springcloud-openfeign-api 项目的 ProviderClientFallbackFactory](../springcloud-openfeign-api/src/main/java/com/example/springcloud/ProviderClientFallbackFactory.java) 
+
+>需要注意的是，当我把 Open Feign 提取为一个 API 依赖包项目时，这个 Fallback Factory 加上 `@Componet` 注解并不会生效。
+>
+>应该是因为这种作为依赖的项目，没有主启动类，Spring 没办法扫描，也就是缺少了 Spring 上下文。所以后续需要将这个 Fallback Factory 注册为 Bean。
+
+
+2. 编写 Open Feign 配置类，将 Fallback Factory 注册为 `@Bean`
+
+可以参考 [springcloud-openfeign-api 项目的 ProviderClientConfig](../springcloud-openfeign-api/src/main/java/com/example/springcloud/ProviderClientConfig.java) 
+
+> 这里也是，因为没有主启动类，没有 Spring 上下文其实是无法扫描 `@Configuration` 配置类注解。经过尝试，不写 `@Configuration` 也是可以的，这里只是为了容易理解加上了该注解。
+> 
+> 也就是说，这里不加  `@Configuration` ，也是可以使用 `@Bean` 去注册一个 Bean 是可以的。
+> 
+> 因为后面 `@FeignClient` 注解中的 `configuration` 属性会将 `ProviderClientConfig` 注册为一个配置类。
+
+
+3. 在 Interface 接口中的 `@FeignClient` 注解的 `configuration` 和 `fallbackFactory` 属性中将刚刚创建的配置类和 Fallback Factory 的 class 字节码加上去
+
+参考 [springcloud-openfeign-api 项目的 ProviderClient](../springcloud-openfeign-api/src/main/java/com/example/springcloud/ProviderClient.java) 
+
 
 # Ribbon：负载均衡
 
