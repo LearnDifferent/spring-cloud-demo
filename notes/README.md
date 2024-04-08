@@ -1766,7 +1766,21 @@ Sentinel 热点参数限流是 Sentinel 提供的一种高级流量控制功能�
 
 注意，热点参数一定要在资源的方法上配置 `@SentinelResource=("资源名")` 才有效，普通的 SpringMVC 没加上这个注解就无法做热点参数配置。
 
+## Sentinel 整合 Open Feign
 
+以引入了 [springcloud-openfeign-api](../springcloud-openfeign-api) 为依赖的 [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) 为例。
+
+因为引入了 [springcloud-openfeign-api](../springcloud-openfeign-api) ，而 [springcloud-openfeign-api](../springcloud-openfeign-api) 是有 Open Feign 依赖的，所以不需要在 [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) 中再引入 Open Feign 依赖了。
+
+所以， [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) 还需要引入 Sentinel 的依赖。
+
+然后，因为 [springcloud-openfeign-api](../springcloud-openfeign-api) 是单纯的依赖项目，所以其配置文件是不生效的。
+
+所以，需要在 [springcloud-alibaba-nacos-consumer-6200](../springcloud-alibaba-nacos-consumer-6200) 中添加 Open Feign 的配置文件，并增加 Sentinel 的支持：`feign.sentinel.enabled=true`
+
+最后，可以测试一下，此时 Sentinel Dashboard 控制台会显示 `GET:资源路径` ：
+
+![](./sentinel_dashboard_open_feign_enable_sentinel.png)
 
 # Hystrix 熔断和降级
 
