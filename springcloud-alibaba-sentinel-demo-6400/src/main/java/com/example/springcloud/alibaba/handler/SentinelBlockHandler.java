@@ -10,6 +10,7 @@ import com.alibaba.csp.sentinel.slots.system.SystemBlockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 /**
  * Sentinel 自定义异常处理结果
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
  * @author zhou
  * @date 2024/6/4
  */
+@Component
 public class SentinelBlockHandler implements BlockExceptionHandler {
 
     @Override
