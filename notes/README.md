@@ -1864,6 +1864,13 @@ Sentinel 提供了三种主要的熔断策略，分别是：
 
 ![](./error_ratio_and_count.png)
 
+## Sentinel 自定义异常结果
+
+默认情况下，发生限流、降级、授权拦截时，都会抛出异常到调用方。
+
+如果要自定义异常时的返回结果，需要实现 BlockExceptionHandler 接口，然后通过编码来自定义异常返回结果。
+
+参考：[springcloud-alibaba-sentinel-demo-6400 的 SentinelBlockHandler](../springcloud-alibaba-sentinel-demo-6400/src/main/java/com/example/springcloud/alibaba/handler/SentinelBlockHandler.java)
 
 # Hystrix 熔断和降级
 
