@@ -1872,6 +1872,14 @@ Sentinel 提供了三种主要的熔断策略，分别是：
 
 参考：[springcloud-alibaba-sentinel-demo-6400 的 SentinelBlockHandler](../springcloud-alibaba-sentinel-demo-6400/src/main/java/com/example/springcloud/alibaba/handler/SentinelBlockHandler.java)
 
+## Sentinel 的三种配置管理模式
+
+- 原始模式：默认是保存在内存中，如果重启则丢失
+- pull 模式：保存在本地配置文件中，或数据库里，定时去读取修改
+- push 模式：保存在远程配置中心，配置出现变更时，直接推送到到客户端
+
+[Sentinel 实现 push 模式（Nacos 存储规则）参考 B 战视频](https://www.bilibili.com/video/BV1LQ4y127n4?t=1497.5&p=146)
+
 # Hystrix 熔断和降级
 
 ## 熔断和降级 / Hystrix - 相关基础
