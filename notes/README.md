@@ -2980,6 +2980,8 @@ Spring Cloud Bus 作用：
 
 ## 2PC 两阶段提交协议
 
+> 2PC 属于强一致性模型，没有超时的机制。只要没有收到 Commit / Rollback 的指令之前，程序都会阻塞等待。
+
 2PC：
 
 - 2PC = Two Phase Commitment Protocol，两阶段提交协议
@@ -3035,6 +3037,8 @@ Redo Log：
 
 ![](./2pc_failure.png)
 
+
+
 # Seata 分布式事务
 
 ## TC、TM 和 RM
@@ -3050,7 +3054,8 @@ Redo Log：
 
 [RM (Resource Manager) - 资源管理器​](https://seata.apache.org/zh-cn/docs/overview/terminology#rm-resource-manager---%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E5%99%A8 "RM (Resource Manager) - 资源管理器的直接链接")
 
-- 管理分支事务处理的资源，与TC交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚
+- 管理分支事务处理的资源，与 TC 交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚
+- 比如 MySQL 数据库
 
 
 ![](./seata_basic.png)
