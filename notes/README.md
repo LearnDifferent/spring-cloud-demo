@@ -3068,6 +3068,8 @@ Redo Log：
 
 Seata 支持的事务模式都是基于 2PC（两阶段提交）。
 
+其中，AT、TCC 和 SAGA 都是补偿型/最终一致性事务，XA 是全局一致性/强一致性事务。
+
 **AT 模式**
 
 >AT 模式是 Seata 创新的一种非侵入式的分布式事务解决方案，Seata 在内部做了对数据库操作的代理层，我们使用 Seata AT 模式时，实际上用的是 Seata 自带的数据源代理 DataSourceProxy，Seata 在这层代理中加入了很多逻辑，比如插入回滚 undo_log 日志，检查全局锁等。
@@ -3113,6 +3115,8 @@ TCC 完全不依赖底层数据库，能够实现跨数据库、跨应用资源�
 
 ## AT 模式
 
+### AT 模式基于 2PC
+
 Seata 的 AT 模式是从 2PC 演变过来的。
 
 AT 模式  一阶段：
@@ -3131,3 +3135,41 @@ AT 模式  二阶段：
 2. 如果一阶段中有本地事务没有通过，就执行全局回滚
 3. 执行全局回滚是通过 undo log 记录的数据，生成反向的 SQL 更新语句并执行，将数据更新为需要回滚的数据来完成分支事务的回滚
 4. 事务完成后，会释放所有资源，删除对应日志
+
+### AT 模式的事务隔离
+
+**写操作的事务隔离**
+
+两个 Seata 的全局事务（XID 不同的全局事务）对同一个数据进行修改的时候，怎么保证写操作的隔离？
+
+**使用 Global Lock 全局锁。**
+
+在修改数据的时候，先 Require Local Lock 本地锁，然后再  Require Global Lock 获取全局锁，如果获取成功，就修改数据。
+
+当 Global Commit 全局提交之后再 Release Local Lock and Global Lock 释放本地锁和全局锁。
+
+如果 Require Global Lock 失败，说明有其他全局事务正在修改数据，那就等待 Global Lock 的 Release。
+
+因为获取锁有超时时间，超过了就是 Require Global Lock Timeout。
+
+这样就使用 Global Lock 解决了脏读的问题，形成了写操作的互斥，完成了写操作的事务隔离。
+
+**如果是全局回滚 Global Rollback 的话** ，假设当前全局事务是 XID1，另一个是 XID2。
+
+XID1 开始 Rollback 的这个时间点，锁的情况是：
+
+- 仍然持有 Global Lock
+- 可能无法 Require Local Lock，因为 XID2 可能持有该数据的 Local Lock
+
+XID2 此时：
+
+- 没有 Global Lock
+- 可能持有 Local Lock
+
+因为 XID2 没有持有全局锁（Global Lock），所以它会不断尝试获取全局锁，而其所持有的本地锁（Local Lock）此时是不会释放的。
+
+XID1 此时不断重试获取本地锁，等待 XID2 获取全局锁超时后放弃获取全局锁。当 XID2 放弃获取全局锁后，它会回滚本地事务，并释放本地锁。
+
+这样，XID1 就可以获取本地锁，然后根据日志将数据修改回去，完成回滚。最后是释放本地锁和全局锁，完成全局回滚。
+
+---
