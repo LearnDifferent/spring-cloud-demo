@@ -3284,3 +3284,7 @@ XA prepare 后，分支事务进入阻塞阶段，收到 XA commit 或 XA rollba
 - 完成阶段：
     - 分支提交：执行 XA 分支的 commit
     - 分支回滚：执行 XA 分支的 rollback
+
+## Seata Samples
+
+https://github.com/apache/incubator-seata-samples
