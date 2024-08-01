@@ -3327,3 +3327,33 @@ XA prepare 后，分支事务进入阻塞阶段，收到 XA commit 或 XA rollba
 ## Seata Samples
 
 https://github.com/apache/incubator-seata-samples
+
+# Dubbo
+
+>[Apache Dubbo 官网](https://cn.dubbo.apache.org/zh-cn/)
+>
+>[官方文档](https://cn.dubbo.apache.org/zh-cn/overview/home/)
+
+## 为什么需要 Dubbo？
+
+Dubbo 介绍：
+
+- Apache Dubbo 是一款 RPC 服务开发框架，用于解决微服务架构下的服务治理与通信问题，官方提供了 Java、Golang 等多语言 SDK 实现。
+- 使用 Dubbo 开发的微服务原生具备相互之间的远程地址发现与通信能力， 利用 Dubbo 提供的丰富服务治理特性，可以实现诸如服务发现、负载均衡、流量调度等服务治理诉求。
+- Dubbo 被设计为高度可扩展，用户可以方便的实现流量拦截、选址的各种定制逻辑。
+
+功能：
+
+- 服务之间的通信
+- 服务的容错
+- 服务的负载均衡
+- 服务的监控
+- 服务的注册与发现
+
+功能中比较重点的是，
+
+微服务监控与治理：Dubbo 官方提供的服务发现、动态配置、负载均衡、流量路由等基础组件可以很好的帮助解决微服务基础实践的问题。除此之外，您还可以用 Admin 控制台监控微服务状态，通过周边生态完成限流降级、数据一致性、链路追踪等能力。
+
+高性能的 RPC 通信：Dubbo 帮助解决微服务组件之间的通信问题，提供了基于 HTTP、HTTP/2、TCP 等的多种高性能通信协议实现，并支持序列化协议扩展，在实现上解决网络连接管理、数据传输等基础问题。
+
+其他的功能详见 [为什么需要 Dubbo，它能做什么？](https://cn.dubbo.apache.org/zh-cn/overview/what/#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-dubbo%E5%AE%83%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88)
